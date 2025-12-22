@@ -3,7 +3,7 @@ Contributors: cloudflare, barrykooij, defries
 Tags: cloudflare, seo, ssl, ddos, speed, security, cdn, performance, free
 Requires at least: 5.0
 Tested up to: 6.9.0
-Stable tag: 4.14.1
+Stable tag: 4.14.2
 Requires PHP: 7.4
 License: BSD-3-Clause
 
@@ -98,6 +98,17 @@ Yes, Cloudflare works with, and helps speed up your site even more, if you have 
 == Screenshots ==
 
 == Changelog ==
+
+= 4.14.2 - 2025-12-22 =
+
+*Fixed*
+
+* Set correct type for $logger parameter in deprecated CF\WordPress\Datastore constructor.
+
+*Changed*
+
+* Removed contructor parameter types from deprecated CF\Integration\DefaultIntegration to prevent outdated integration errors.
+* Instead of directly loading the polyfil Normalizer in global namespace, patched polyfill-intl-idn to use vendor prefixed Normalizer.
 
 = 4.14.1 - 2025-12-19 =
 

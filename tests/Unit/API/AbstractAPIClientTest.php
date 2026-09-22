@@ -7,9 +7,9 @@ use Cloudflare\APO\Integration\DefaultLogger;
 use Cloudflare\APO\Integration\DataStoreInterface;
 use Cloudflare\APO\Integration\IntegrationAPIInterface;
 use Cloudflare\APO\API\HttpClientInterface;
-use \Cloudflare\APO\API\Request;
-use \Cloudflare\APO\API\AbstractAPIClient;
-use \Cloudflare\APO\Integration\DefaultConfig;
+use Cloudflare\APO\API\Request;
+use Cloudflare\APO\API\AbstractAPIClient;
+use Cloudflare\APO\Integration\DefaultConfig;
 
 class AbstractAPIClientTest extends \PHPUnit\Framework\TestCase
 {

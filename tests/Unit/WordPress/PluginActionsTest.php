@@ -178,9 +178,7 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         $this->mockWordPressClientAPI->method('responseOk')->willReturn(true);
         // Only hotlink_protection (11th call, index 10) fails
         $this->mockWordPressClientAPI->method('changeZoneSettings')->willReturnOnConsecutiveCalls(
-            true, true, true, true, true, true, true, true, true, true,
-            false, // hotlink_protection
-            true, true
+            ...$this->settingResults(13, array(10 => false)) // hotlink_protection
         );
         // All 13 settings should be attempted
         $this->mockWordPressClientAPI->expects($this->exactly(13))->method('changeZoneSettings');
@@ -216,9 +214,8 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         );
         $this->mockWordPressClientAPI->method('responseOk')->willReturn(true);
         $this->mockWordPressClientAPI->method('changeZoneSettings')->willReturnOnConsecutiveCalls(
-            false, // security_level (first)
-            true, true, true, true, true, true, true, true, true, true, true,
-            false  // automatic_https_rewrites (last)
+            // security_level (first) and automatic_https_rewrites (last)
+            ...$this->settingResults(13, array(0 => false, 12 => false))
         );
         $this->mockWordPressClientAPI->expects($this->exactly(13))->method('changeZoneSettings');
 
@@ -254,10 +251,7 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         $this->mockWordPressClientAPI->method('responseOk')->willReturn(true);
         // Only `polish` (15th call, index 14) fails.
         $this->mockWordPressClientAPI->method('changeZoneSettings')->willReturnOnConsecutiveCalls(
-            true, true, true, true, true, true, true, true, true, true,
-            true, true, true,
-            true,  // mirage
-            false  // polish
+            ...$this->settingResults(15, array(14 => false)) // polish
         );
         $this->mockWordPressClientAPI->expects($this->exactly(15))->method('changeZoneSettings');
 
@@ -290,5 +284,19 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         // Should not throw any exception
         $this->pluginActions->applyDefaultSettings();
         $this->assertTrue(true); // Explicit assertion that we reached this point
+    }
+
+    /**
+     * Build the per-call results for changeZoneSettings(): every call
+     * succeeds except the zero-based call indexes listed in $failures.
+     *
+     * @param int               $calls    Number of zone setting calls.
+     * @param array<int, false> $failures Results to override, keyed by call index.
+     *
+     * @return bool[]
+     */
+    private function settingResults($calls, array $failures)
+    {
+        return array_replace(array_fill(0, $calls, true), $failures);
     }
 }

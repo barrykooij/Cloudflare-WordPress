@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: Cloudflare
 Plugin URI: https://blog.cloudflare.com/new-wordpress-plugin/

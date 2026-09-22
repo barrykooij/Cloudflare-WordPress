@@ -162,7 +162,7 @@ abstract class AbstractAPIClient implements APIInterface
 
             $message = print_r($message, true);
         }
-        $this->logger->$logLevel('['.$apiName.'] '.$message);
+        $this->logger->$logLevel('[' . $apiName . '] ' . $message);
     }
 
     /**

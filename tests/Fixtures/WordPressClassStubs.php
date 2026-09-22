@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Minimal stubs for WordPress core classes referenced by the plugin.
  *

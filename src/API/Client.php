@@ -166,7 +166,7 @@ class Client extends AbstractAPIClient
      */
     public function zoneGetDetails($zone_tag)
     {
-        $request = new Request('GET', 'zones/'.$zone_tag, array(), array());
+        $request = new Request('GET', 'zones/' . $zone_tag, array(), array());
 
         return $this->callAPI($request);
     }

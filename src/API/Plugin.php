@@ -59,7 +59,7 @@ class Plugin extends Client
      */
     public function callAPI(Request $request)
     {
-        return $this->createAPIError('The url: '.$request->getUrl().' is not a valid path.');
+        return $this->createAPIError('The url: ' . $request->getUrl() . ' is not a valid path.');
     }
 
     public function createAPISuccessResponse($result)

@@ -8,7 +8,7 @@ $logger = new Cloudflare\APO\Integration\DefaultLogger($config->getValue('debug'
 $dataStore = new Cloudflare\APO\WordPress\DataStore($logger);
 $wordpressAPI = new Cloudflare\APO\WordPress\WordPressAPI($dataStore);
 
-$pluginData = get_plugin_data(CLOUDFLARE_PLUGIN_DIR.'cloudflare.php');
+$pluginData = get_plugin_data(CLOUDFLARE_PLUGIN_DIR . 'cloudflare.php');
 $pluginVersion = $pluginData['Version'];
 
 wp_register_style('cf-corecss', plugins_url('stylesheets/cf.core.css', __FILE__), null, $pluginVersion);

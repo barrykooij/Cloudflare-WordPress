@@ -3,7 +3,7 @@
 namespace Cloudflare\APO\Tests\Unit\API;
 
 use Cloudflare\APO\API\DefaultHttpClient;
-use \Cloudflare\APO\API\Request;
+use Cloudflare\APO\API\Request;
 
 class DefaultHttpClientTest extends \PHPUnit\Framework\TestCase
 {

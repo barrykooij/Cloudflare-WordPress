@@ -75,7 +75,7 @@ class DefaultRestAPIRouter implements RouterInterface
         //substring of everything after the endpoint is the path
         return substr($request->getUrl(), strpos($request->getUrl(), $this->api->getEndpoint()) + strlen($this->api->getEndpoint()));
     }
-    
+
     /**
      * @param Request $request
      *
@@ -98,13 +98,14 @@ class DefaultRestAPIRouter implements RouterInterface
             );
 
             //Check to see if this is our route
-            if (preg_match('#^'.$regex.'/?$#', $request->getUrl())) {
-                if (in_array($request->getMethod(), $route_details_array['methods']) || array_key_exists(
-                    $request->getMethod(),
-                    $route_details_array['methods']
-                )
+            if (preg_match('#^' . $regex . '/?$#', $request->getUrl())) {
+                if (
+                    in_array($request->getMethod(), $route_details_array['methods']) || array_key_exists(
+                        $request->getMethod(),
+                        $route_details_array['methods']
+                    )
                 ) {
-                    $this->logger->debug('Route matched for '.$request->getMethod().$request->getUrl().' now using '.$route_details_array['methods'][$request->getMethod()]['function']);
+                    $this->logger->debug('Route matched for ' . $request->getMethod() . $request->getUrl() . ' now using ' . $route_details_array['methods'][$request->getMethod()]['function']);
 
                     return array(
                         'class' => $route_details_array['class'],

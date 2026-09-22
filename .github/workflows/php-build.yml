@@ -101,4 +101,4 @@ jobs:
         fi
 
     - name: Run tests against build artifact
-      run: composer run-script test-build
+      run: composer run-script test:build

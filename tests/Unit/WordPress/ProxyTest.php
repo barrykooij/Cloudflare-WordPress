@@ -49,6 +49,17 @@ class ProxyTest extends \PHPUnit\Framework\TestCase
         $this->mockProxy->setRequestRouter($this->mockRequestRouter);
 
         $mockHeader = $this->getFunctionMock('Cloudflare\APO\WordPress', 'header');
+
+        // createRequest() unslashes and sanitizes request input with WordPress
+        // functions; pass values through unchanged in the unit suite.
+        foreach (array('wp_unslash', 'sanitize_text_field', 'esc_url_raw') as $function) {
+            $this->getFunctionMock('Cloudflare\APO\WordPress', $function)
+                ->expects($this->any())
+                ->willReturnArgument(0);
+        }
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_json_encode')
+            ->expects($this->any())
+            ->willReturnCallback('json_encode');
     }
 
     public function testRunHandlesGet()

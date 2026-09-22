@@ -6,8 +6,8 @@ use Cloudflare\APO\API\Request;
 
 class DefaultHttpClient implements HttpClientInterface
 {
-    const CONTENT_TYPE_KEY = 'Content-Type';
-    const APPLICATION_JSON_KEY = 'application/json';
+    public const CONTENT_TYPE_KEY = 'Content-Type';
+    public const APPLICATION_JSON_KEY = 'application/json';
 
     protected $endpoint;
 

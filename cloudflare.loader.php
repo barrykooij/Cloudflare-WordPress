@@ -25,8 +25,17 @@ try {
         // Rewrite Cloudflare IPs when the plugin is loaded,
         // Doing this later in the plugin lifecycle will not update the IPs correctly
         add_action('plugins_loaded', function () {
-            $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
-            $_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            // Only trust the header when it holds a valid IP address.
+            $connectingIp = isset($_SERVER['HTTP_CF_CONNECTING_IP'])
+                ? filter_var(wp_unslash($_SERVER['HTTP_CF_CONNECTING_IP']), FILTER_VALIDATE_IP)
+                : false;
+
+            if ($connectingIp === false) {
+                return;
+            }
+
+            $_SERVER['REMOTE_ADDR'] = $connectingIp;
+            $_SERVER['HTTP_X_FORWARDED_FOR'] = $connectingIp;
         }, 1);
     }
 } catch (\RuntimeException $e) {

@@ -4,7 +4,7 @@ namespace Cloudflare\APO\WordPress;
 
 class Utils
 {
-    const COMPOSER_CONFIG_PATH = '/../../composer.json';
+    public const COMPOSER_CONFIG_PATH = '/../../composer.json';
 
     /**
      * @param $haystack
@@ -53,6 +53,7 @@ class Utils
         if (!file_exists(dirname(__FILE__) . self::COMPOSER_CONFIG_PATH)) {
             return [];
         }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reads a file bundled with the plugin, not a remote URL.
         return json_decode(file_get_contents(dirname(__FILE__) . self::COMPOSER_CONFIG_PATH), true);
     }
 }

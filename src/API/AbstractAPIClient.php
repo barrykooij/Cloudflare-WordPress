@@ -8,8 +8,8 @@ use Cloudflare\APO\API\HttpClientInterface;
 
 abstract class AbstractAPIClient implements APIInterface
 {
-    const CONTENT_TYPE_KEY = 'Content-Type';
-    const APPLICATION_JSON_KEY = 'application/json';
+    public const CONTENT_TYPE_KEY = 'Content-Type';
+    public const APPLICATION_JSON_KEY = 'application/json';
 
     protected $config;
     protected $data_store;

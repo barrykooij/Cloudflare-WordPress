@@ -22,8 +22,8 @@ class AbstractAPIClientTest extends \PHPUnit\Framework\TestCase
     protected $mockLogger;
     protected $mockRequest;
 
-    const TOTAL_PAGES = 3;
-    const MOCK_RESPONSE = [
+    public const TOTAL_PAGES = 3;
+    public const MOCK_RESPONSE = [
         'result' => [],
         'result_info' => [
             'total_pages' => self::TOTAL_PAGES

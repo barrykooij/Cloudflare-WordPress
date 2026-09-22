@@ -7,12 +7,12 @@ use Cloudflare\APO\WordPress\Utils;
 
 class Client extends AbstractAPIClient
 {
-    const CLIENT_API_NAME = 'CLIENT API';
-    const ENDPOINT = 'https://api.cloudflare.com/client/v4/';
-    const X_AUTH_KEY = 'X-Auth-Key';
-    const X_AUTH_EMAIL = 'X-Auth-Email';
-    const AUTHORIZATION = 'Authorization';
-    const USER_AGENT = 'User-Agent';
+    public const CLIENT_API_NAME = 'CLIENT API';
+    public const ENDPOINT = 'https://api.cloudflare.com/client/v4/';
+    public const X_AUTH_KEY = 'X-Auth-Key';
+    public const X_AUTH_EMAIL = 'X-Auth-Email';
+    public const AUTHORIZATION = 'Authorization';
+    public const USER_AGENT = 'User-Agent';
 
     /**
      * Returns true when the supplied credential is a Cloudflare Global API

@@ -17,11 +17,11 @@ class Hooks
     protected $logger;
     protected $proxy;
 
-    const CLOUDFLARE_JSON = 'CLOUDFLARE_JSON';
-    const WP_AJAX_ACTION = 'cloudflare_proxy';
+    public const CLOUDFLARE_JSON = 'CLOUDFLARE_JSON';
+    public const WP_AJAX_ACTION = 'cloudflare_proxy';
 
     // See https://developers.cloudflare.com/cache/about/default-cache-behavior/
-    const CLOUDFLARE_CACHABLE_EXTENSIONS = [
+    public const CLOUDFLARE_CACHABLE_EXTENSIONS = [
         "7z", "csv", "gif", "midi", "png", "tif", "zip", "avi", "doc", "gz",
         "mkv", "ppt", "tiff", "zst", "avif", "docx", "ico", "mp3", "pptx",
         "ttf", "apk", "dmg", "iso", "mp4", "ps", "webm", "bin", "ejs", "jar",
@@ -82,7 +82,7 @@ class Hooks
     public function cloudflareConfigPage()
     {
         if (function_exists('add_options_page')) {
-            add_options_page(__('Cloudflare Configuration'), __('Cloudflare'), 'manage_options', 'cloudflare', array($this, 'cloudflareIndexPage'));
+            add_options_page(__('Cloudflare Configuration', 'cloudflare'), __('Cloudflare', 'cloudflare'), 'manage_options', 'cloudflare', array($this, 'cloudflareIndexPage'));
         }
     }
 
@@ -107,7 +107,7 @@ class Hooks
     {
         if (version_compare($GLOBALS['wp_version'], CLOUDFLARE_MIN_WP_VERSION, '<')) {
             deactivate_plugins(basename(CLOUDFLARE_PLUGIN_DIR));
-            wp_die('<p><strong>Cloudflare</strong> plugin requires WordPress version ' . CLOUDFLARE_MIN_WP_VERSION . ' or greater.</p>', 'Plugin Activation Error', array('response' => 200, 'back_link' => true));
+            wp_die('<p><strong>Cloudflare</strong> plugin requires WordPress version ' . esc_html(CLOUDFLARE_MIN_WP_VERSION) . ' or greater.</p>', 'Plugin Activation Error', array('response' => 200, 'back_link' => true));
         }
 
         return true;
@@ -179,7 +179,7 @@ class Hooks
                     $url_to_test = $url['url'];
                 }
 
-                if (!Utils::strEndsWith(parse_url($url_to_test, PHP_URL_HOST), $wpDomain)) {
+                if (!Utils::strEndsWith(wp_parse_url($url_to_test, PHP_URL_HOST), $wpDomain)) {
                     unset($urls[$key]);
                 }
             }
@@ -245,7 +245,7 @@ class Hooks
         //Purge cache on mobile
         $headers = array("CF-Device-Type" => "mobile");
         $purge_object = array("url" => $url, "headers" => $headers);
-        $json = json_decode(json_encode($purge_object, JSON_FORCE_OBJECT));
+        $json = json_decode(wp_json_encode($purge_object, JSON_FORCE_OBJECT));
         return $json;
     }
 
@@ -420,7 +420,11 @@ class Hooks
      */
     public function getCloudflareRequestJSON()
     {
+        // Only the raw body is stored here; Proxy::run() checks the user's
+        // capability and the CSRF token before the request is acted on.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['action']) && $_GET['action'] === self::WP_AJAX_ACTION) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reads the request body, not a remote URL.
             $GLOBALS[self::CLOUDFLARE_JSON] = file_get_contents('php://input');
         }
     }
@@ -532,7 +536,7 @@ class Hooks
      */
     private function pathHasCachableFileExtension($value)
     {
-        $parsed_url = parse_url($value, PHP_URL_PATH);
+        $parsed_url = wp_parse_url($value, PHP_URL_PATH);
 
         foreach (self::CLOUDFLARE_CACHABLE_EXTENSIONS as $ext) {
             if (Utils::strEndsWith($parsed_url, "." . $ext)) {
@@ -554,7 +558,7 @@ class Hooks
      */
     private function pathIsNotForFeeds($value)
     {
-        $parsed_url = parse_url($value, PHP_URL_PATH);
+        $parsed_url = wp_parse_url($value, PHP_URL_PATH);
         if (!is_string($parsed_url) || $parsed_url === '') {
             return true;
         }
@@ -569,7 +573,7 @@ class Hooks
      */
     private function urlIsHTTPS($value)
     {
-        $parsed_scheme = parse_url($value, PHP_URL_SCHEME);
+        $parsed_scheme = wp_parse_url($value, PHP_URL_SCHEME);
 
         if ($parsed_scheme == "https") {
             return true;

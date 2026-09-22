@@ -157,7 +157,7 @@ class WordPressClientAPI extends Client
         );
 
         if ($requestParams['method'] !== 'GET') {
-            $requestParams['body'] = json_encode($request->getBody());
+            $requestParams['body'] = wp_json_encode($request->getBody());
             $requestParams['headers']['Content-Type'] = 'application/json';
         }
 

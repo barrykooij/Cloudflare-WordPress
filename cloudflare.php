@@ -42,7 +42,7 @@ if (version_compare(PHP_VERSION, CLOUDFLARE_MIN_PHP_VERSION, '<')) {
     require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
     deactivate_plugins(plugin_basename(__FILE__), true);
-    wp_die('<p>The Cloudflare plugin requires a PHP version of at least ' . CLOUDFLARE_MIN_PHP_VERSION . '; you have ' . PHP_VERSION . '.</p>', 'Plugin Activation Error', array('response' => 200, 'back_link' => true));
+    wp_die('<p>The Cloudflare plugin requires a PHP version of at least ' . esc_html(CLOUDFLARE_MIN_PHP_VERSION) . '; you have ' . esc_html(PHP_VERSION) . '.</p>', 'Plugin Activation Error', array('response' => 200, 'back_link' => true));
 }
 
 // Plugin uses namespaces. To support old PHP version which doesn't support

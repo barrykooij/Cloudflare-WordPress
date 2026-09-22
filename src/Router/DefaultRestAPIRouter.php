@@ -16,7 +16,7 @@ class DefaultRestAPIRouter implements RouterInterface
     private $logger;
     private $routes;
 
-    const ENDPOINT = 'https://api.cloudflare.com/client/v4/';
+    public const ENDPOINT = 'https://api.cloudflare.com/client/v4/';
 
     // Placeholders you can use to pattern match part of a URI
     public static $API_ROUTING_PLACEHOLDERS = array(
@@ -100,7 +100,7 @@ class DefaultRestAPIRouter implements RouterInterface
             //Check to see if this is our route
             if (preg_match('#^' . $regex . '/?$#', $request->getUrl())) {
                 if (
-                    in_array($request->getMethod(), $route_details_array['methods']) || array_key_exists(
+                    in_array($request->getMethod(), $route_details_array['methods'], true) || array_key_exists(
                         $request->getMethod(),
                         $route_details_array['methods']
                     )

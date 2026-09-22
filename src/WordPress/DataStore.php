@@ -9,9 +9,9 @@ use Cloudflare\APO\IntlUtil;
 
 class DataStore implements DataStoreInterface
 {
-    const API_KEY = 'cloudflare_api_key';
-    const EMAIL = 'cloudflare_api_email';
-    const CACHED_DOMAIN_NAME = 'cloudflare_cached_domain_name';
+    public const API_KEY = 'cloudflare_api_key';
+    public const EMAIL = 'cloudflare_api_email';
+    public const CACHED_DOMAIN_NAME = 'cloudflare_cached_domain_name';
 
     protected $wordPressWrapper;
     public $logger;
@@ -142,7 +142,7 @@ class DataStore implements DataStoreInterface
 
     private function getPluginSettingName($settingId)
     {
-        return in_array($settingId, Plugin::getPluginSettingsKeys()) ? $settingId : false;
+        return in_array($settingId, Plugin::getPluginSettingsKeys(), true) ? $settingId : false;
     }
 
     /**

@@ -41,7 +41,14 @@
     <rule ref="PHPCompatibilityWP"/>
 
     <!-- WordPress sniffs that catch security and correctness issues. -->
-    <rule ref="WordPress.Security"/>
+    <rule ref="WordPress.Security">
+        <!--
+            Exception messages are never rendered as HTML: the AJAX proxy
+            returns them as JSON and the settings UI renders them as text.
+            Escaping at the throw site would put HTML entities in that JSON.
+        -->
+        <exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+    </rule>
     <rule ref="WordPress.DB"/>
     <rule ref="WordPress.WP.AlternativeFunctions"/>
     <rule ref="WordPress.PHP.StrictInArray"/>

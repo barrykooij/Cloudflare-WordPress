@@ -54,6 +54,15 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->hooks->setIntegrationAPI($this->mockWordPressAPI);
         $this->hooks->setIntegrationContext($this->mockDefaultIntegration);
         $this->hooks->setProxy($this->mockProxy);
+
+        // Hooks uses WordPress' wrappers around parse_url() and json_encode();
+        // delegate to the PHP functions in the unit suite.
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_parse_url')
+            ->expects($this->any())
+            ->willReturnCallback('parse_url');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_json_encode')
+            ->expects($this->any())
+            ->willReturnCallback('json_encode');
     }
 
     public function testCloudflareConfigPageCallsAddOptionsPageHookIfItExists()

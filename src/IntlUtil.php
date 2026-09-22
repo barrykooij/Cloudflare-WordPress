@@ -27,6 +27,7 @@ class IntlUtil
      * @param mixed $idna_info
      * @return string|bool
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps -- Mirrors the PHP intl function it wraps.
     public static function idn_to_ascii($domain, $flags = IDNA_DEFAULT, $variant = INTL_IDNA_VARIANT_UTS46, &$idna_info = null)
     {
         if (function_exists('idn_to_ascii')) {
@@ -45,6 +46,7 @@ class IntlUtil
      * @param mixed $idna_info
      * @return bool|string
      */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps -- Mirrors the PHP intl function it wraps.
     public static function idn_to_utf8($domain, $flags = IDNA_DEFAULT, $variant = INTL_IDNA_VARIANT_UTS46, &$idna_info = null)
     {
         if (function_exists('idn_to_utf8')) {

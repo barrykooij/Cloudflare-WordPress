@@ -7,6 +7,7 @@ use Cloudflare\APO\Integration\DefaultLogger;
 use Cloudflare\APO\Tests\Integration\Support\HttpRecorder;
 use Cloudflare\APO\Tests\Integration\Support\WpDieException;
 use Cloudflare\APO\WordPress\DataStore;
+use Cloudflare\APO\WordPress\Hooks;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -108,6 +109,37 @@ abstract class IntegrationTestCase extends TestCase
     public function throwWpDie($message)
     {
         throw new WpDieException(is_string($message) ? $message : '');
+    }
+
+    /**
+     * The Hooks instance cloudflare.loader.php registered its callbacks with.
+     *
+     * @return Hooks
+     */
+    protected function pluginHooks()
+    {
+        foreach ($GLOBALS['wp_filter']['init']->callbacks as $callbacks) {
+            foreach ($callbacks as $callback) {
+                if (is_array($callback['function']) && $callback['function'][0] instanceof Hooks) {
+                    return $callback['function'][0];
+                }
+            }
+        }
+
+        $this->fail('The plugin did not register its Hooks instance on init.');
+    }
+
+    /**
+     * Priority a Hooks method is registered with on an action or filter.
+     *
+     * @param string $hookName
+     * @param string $method
+     *
+     * @return int|false
+     */
+    protected function hookPriority($hookName, $method)
+    {
+        return has_filter($hookName, array($this->pluginHooks(), $method));
     }
 
     /**

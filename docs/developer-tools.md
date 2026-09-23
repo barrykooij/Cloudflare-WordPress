@@ -33,15 +33,17 @@ from the configuration files in the root of the repository. It is installed by
 | Environment | Config | Site | Start | Used for |
 |---|---|---|---|---|
 | Development | `.wp-env.json` | http://localhost:8878 | `npm run env:start` | Trying out changes |
-| Tests | `.wp-env.test.json` | http://localhost:8879 | `npm run env:test:start` | `npm run test:integration` |
-| Build | `.wp-env.build.json` | http://localhost:8877 | `npm run env:build:start` | `npm run test:integration:build` |
-| Compatibility | `.wp-env.compat.json` | http://localhost:8876 | `npm run env:compat:start` | `npm run test:compatibility` |
+| Tests | `.wp-env.test.json` | http://cloudflare.localhost:8879 | `npm run env:test:start` | `npm run test:integration`, `npm run test:e2e` |
+| Build | `.wp-env.build.json` | http://cloudflare.localhost:8877 | `npm run env:build:start` | `npm run test:integration:build`, `npm run test:e2e:build` |
+| Compatibility | `.wp-env.compat.json` | http://cloudflare.localhost:8876 | `npm run env:compat:start` | `npm run test:compatibility` |
 
 The development and test environments load the plugin from this checkout, the
 build environment loads `build/cloudflare` (run `composer build` first). All of
 them use the latest WordPress and activate the plugin after starting. They run
 PHP 7.4, except the compatibility environment, which runs PHP 8.3 because
 several of the third-party plugins it tests need PHP 8.0. Log in at `/wp-admin` with `admin` / `password`.
+The test, build and compatibility sites use `cloudflare.localhost` instead of
+`localhost`; [testing.md](testing.md#integration-tests) explains why.
 
 Stop an environment with the matching `stop` script, for example
 `npm run env:test:stop`. Run WP-CLI in one with `npx wp-env run cli wp ...`,

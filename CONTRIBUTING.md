@@ -37,7 +37,7 @@ Below are Cloudflare maintained repositories the plugins depend on.
 
 ### Development setup
 
-You need PHP 7.4 or later with Composer 2 for the unit tests and static checks, and Node.js 20 or later with Docker for the integration tests.
+You need PHP 7.4 or later with Composer 2 for the unit tests and static checks, and Node.js 20 or later with Docker for the integration and browser tests.
 
 ```sh
 composer install
@@ -50,6 +50,7 @@ Before you open a pull request, run the checks CI enforces:
 composer qa                 # PHPCS, PHPStan and the unit tests
 npm run env:test:start      # a WordPress test site in Docker (wp-env)
 npm run test:integration    # the integration tests on that site
+npm run test:e2e            # the browser tests on that site (needs: npx playwright install chromium)
 ```
 
 ### Tests

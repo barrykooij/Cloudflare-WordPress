@@ -1,6 +1,6 @@
 # Testing and quality checks
 
-The plugin has five test suites and two static checks. All of them run in CI
+The plugin has six test suites and two static checks. All of them run in CI
 on every push and pull request.
 
 | Suite | What it covers | Runs in | Command |
@@ -9,12 +9,14 @@ on every push and pull request.
 | Unit, build | The same tests against the PHP-Scoper build | Your PHP | `composer test:build` |
 | Integration | The plugin inside a real WordPress install | wp-env (Docker) | `npm run test:integration` |
 | Integration, build | The same tests against the build, next to a conflicting `psr/log` | wp-env (Docker) | `npm run test:integration:build` |
-| Compatibility | The integration suite with one third-party plugin active next to Cloudflare, for each supported plugin | wp-env (Docker) | `npm run test:compatibility` |
+| Browser | The settings page and the front page in a real browser (Chromium), without JavaScript errors | wp-env (Docker) and Playwright | `npm run test:e2e` |
+| Compatibility | The integration suite and the browser tests with one third-party plugin active next to Cloudflare, for each supported plugin | wp-env (Docker) and Playwright | `npm run test:compatibility` |
 
 ## Requirements
 
 - PHP 7.4 or later and Composer 2, for the unit tests, PHPCS and PHPStan.
-- Node.js 20 or later and Docker, for the integration tests.
+- Node.js 20 or later and Docker, for the integration and browser tests.
+- Chromium for Playwright, for the browser tests: `npx playwright install chromium`.
 - PHP-Scoper, for the build suites: `composer global require humbug/php-scoper:^0.18`
   (PHP-Scoper itself needs PHP 8.1 or later).
 
@@ -43,6 +45,8 @@ npm install
 | `npm run test:integration` | Integration suite. |
 | `npm run env:build:start` / `env:build:stop` | Start or stop the build test environment. |
 | `npm run test:integration:build` | Integration suite against `build/cloudflare`. |
+| `npm run test:e2e` | Browser tests against the test environment. |
+| `npm run test:e2e:build` | Browser tests against the build environment. |
 | `npm run env:compat:start` / `env:compat:stop` | Start or stop the compatibility environment. |
 | `npm run test:compatibility` | Integration suite next to each third-party plugin. Add `-- <slug> ...` for specific plugins. |
 | `npm run env:start` / `env:stop` | Start or stop the development site. |
@@ -81,7 +85,12 @@ npm run env:test:start
 npm run test:integration
 ```
 
-The test site is available at http://localhost:8879 while it runs.
+The test site is available at http://cloudflare.localhost:8879 while it runs.
+The test, build and compatibility sites use a `cloudflare.localhost` address
+because the plugin cannot match a site on a plain `localhost` (a host name
+without a dot) to a Cloudflare zone. Chrome, Firefox and curl resolve every
+`*.localhost` name to your own machine; for other tools, add
+`127.0.0.1 cloudflare.localhost` to `/etc/hosts`.
 
 WordPress is loaded the way `wp-admin/admin-ajax.php` loads it, so the
 plugin's admin and AJAX hooks are registered and the WordPress admin APIs are
@@ -147,7 +156,7 @@ npm run env:build:start
 npm run test:integration:build
 ```
 
-The build site runs at http://localhost:8877. `ScopedDependenciesTest` only
+The build site runs at http://cloudflare.localhost:8877. `ScopedDependenciesTest` only
 runs in this environment and is skipped elsewhere. You can rebuild while the
 environment is running.
 
@@ -165,6 +174,60 @@ npm run test:integration
 
 Start again without the variables to go back to the defaults.
 
+## Browser tests
+
+The browser tests use [Playwright](https://playwright.dev) to open the site in
+Chromium, as a visitor or as the administrator, and cover what PHPUnit cannot
+see: JavaScript. They live in `tests/E2E` and run against the wp-env test
+environment:
+
+```sh
+npm run env:test:start
+npm run test:e2e
+```
+
+| Test | Checks |
+|---|---|
+| `SettingsPage.spec.js` | Without stored credentials the settings application asks to sign in, and signing in with valid credentials shows the Home tab. An API key Cloudflare rejects shows an error and stores nothing. With credentials, the Home, Settings and Analytics tabs render for the site's zone. |
+| `FrontPage.spec.js` | The front page loads for a visitor, a visitor on a phone and a logged-in user, with the right `cf-edge-cache` header. |
+
+Every browser test also fails automatically when:
+
+- the page throws a JavaScript error or logs a console error, for example
+  because a script failed to load (in compatibility runs, only errors the
+  third-party plugin does not also cause without Cloudflare, see below);
+- the plugin made a Cloudflare API call that has no mocked response.
+
+### The Cloudflare API mock
+
+A real browser talks to the real site, where the `HttpRecorder` of the
+integration tests is not active. The must-use plugin
+`tests/Fixtures/MuPlugins/CloudflareApiMock.php` takes its place for web
+requests in the test, build and compatibility environments. It answers the
+Cloudflare API calls the plugin makes with prepared responses in
+`tests/Fixtures/MuPlugins/CloudflareApiMock/*.json` (a zone for the site's
+domain, its settings, DNS records and entitlements), so no test ever reaches
+the real API. It only accepts the credentials in
+`tests/E2E/Support/Environment.js`, and answers anything else the way
+Cloudflare does, with "Unknown X-Auth-Key or X-Auth-Email". PHPUnit and
+WP-CLI are not affected.
+
+Every call is logged to `wp-content/cloudflare-api-mock.log` in the
+environment, marked as mocked or not. When the settings application starts
+using a new API call, a browser test fails with the call that is missing: add a
+response for it in `CloudflareApiMock::respond()`.
+
+### Failures
+
+Playwright saves a screenshot and a trace of every failed test in
+`tests/E2E/.results`. Open a trace with `npx playwright show-trace <path>` to
+step through the test with the page, its console and its network requests. In
+CI these are uploaded as an artifact of the failed job.
+
+To run the browser tests against the build or compatibility environment, set
+`WP_ENV_CONFIG`, for example
+`WP_ENV_CONFIG=.wp-env.compat.json npx playwright test`.
+
 ## Compatibility tests
 
 The plugins the Cloudflare plugin is compatible with are listed in
@@ -175,8 +238,10 @@ The plugins the Cloudflare plugin is compatible with are listed in
    (CI always starts fresh; locally, update installed plugins with
    `npx wp-env --config=.wp-env.compat.json run cli wp plugin update --all`);
 2. activates it, together with the plugins it requires;
-3. runs the whole integration suite;
-4. deactivates it again.
+3. records the browser errors the plugin causes on its own, with Cloudflare
+   deactivated (see below);
+4. runs the whole integration suite and the browser tests;
+5. deactivates it again.
 
 Every plugin is tested on its own, so a failure points at one plugin.
 
@@ -186,7 +251,7 @@ npm run test:compatibility                     # every plugin in the list
 npm run test:compatibility -- woocommerce      # only the given slugs
 ```
 
-The compatibility site runs at http://localhost:8876 with the latest WordPress
+The compatibility site runs at http://cloudflare.localhost:8876 with the latest WordPress
 on PHP 8.3, because several of the plugins need PHP 8.0 or WordPress 7.0.
 
 Next to the regular integration tests, `CompatibilityTest` only runs here and
@@ -198,6 +263,19 @@ checks that, with the other plugin active:
 - the Cloudflare settings page loads for administrators;
 - the settings proxy answers with JSON through a real `admin-ajax.php` request;
 - the Cloudflare plugin logged no PHP errors to `wp-content/debug.log`.
+
+Third-party plugins sometimes cause JavaScript or console errors on their
+own, for example a script that calls a REST endpoint visitors may not use.
+Such errors say nothing about Cloudflare, so before the browser tests the
+runner records them: with Cloudflare deactivated,
+`tests/E2E/Support/RecordBrowserErrors.js` opens the front page (as a visitor,
+on a phone and logged in) and a regular admin page, twice each, and stores the
+errors in `tests/E2E/.baseline/<slug>.json`. The browser tests then ignore
+those errors, list them in the report as "Also happens without Cloudflare",
+and fail on every other error. Errors are compared by their message and the
+URL without its query string, as query strings hold nonces and version
+numbers. The summary shows how many errors each plugin causes without
+Cloudflare. There is no list of known errors to maintain.
 
 These runs use `phpunit-compatibility.xml.dist`: the same as the integration
 suite, except that PHP deprecations do not fail a test. Third-party plugins
@@ -284,6 +362,6 @@ the five newest majors in:
 |---|---|
 | Test PHP Source | Composer validation, PHP syntax check and unit tests on PHP 7.4 to 8.4 (with and without intl), PHPCS, and coverage on PHP 8.3 (downloadable as the `coverage` artifact) |
 | PHPStan | PHPStan, and on pull requests the baseline check |
-| Integration Tests | The integration suite on the five newest WordPress majors |
-| Test Build Artifact | Build with PHP-Scoper, then the syntax check, the unit tests and the integration suite against the build |
-| Compatibility Tests | The integration suite next to each plugin in `Plugins.json`, one job per plugin. Also runs weekly, as the plugins release independently. |
+| Integration Tests | The integration suite and the browser tests on the five newest WordPress majors |
+| Test Build Artifact | Build with PHP-Scoper, then the syntax check, the unit tests, the integration suite and the browser tests against the build |
+| Compatibility Tests | The integration suite and the browser tests next to each plugin in `Plugins.json`, one job per plugin. Also runs weekly, as the plugins release independently. |

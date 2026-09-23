@@ -1,7 +1,7 @@
 # Cloudflare’s Plugin for WordPress
 
 [![Unit tests](https://github.com/cloudflare/Cloudflare-WordPress/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/cloudflare/Cloudflare-WordPress/actions/workflows/php.yml)
-[![PHPStan level 5](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg)](phpstan.neon.dist)
+[![PHPStan](https://github.com/cloudflare/Cloudflare-WordPress/actions/workflows/phpstan.yml/badge.svg?branch=master)](https://github.com/cloudflare/Cloudflare-WordPress/actions/workflows/phpstan.yml)
 
 Cloudflare’s WordPress plugin brings all of the benefits of Cloudflare into your WordPress dashboard for configuration, including a one-click application of default settings specifically optimized for WordPress.
 

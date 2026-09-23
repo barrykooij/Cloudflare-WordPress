@@ -26,7 +26,7 @@
     <arg name="error-severity" value="1"/>
 
     <config name="testVersion" value="7.4-"/>
-    <config name="minimum_supported_wp_version" value="5.0"/>
+    <config name="minimum_supported_wp_version" value="6.7"/>
 
     <!--
         Code style: PSR-12 (PascalCase classes and files, camelCase methods,

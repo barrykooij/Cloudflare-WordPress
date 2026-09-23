@@ -13,7 +13,7 @@ if (! defined('CLOUDFLARE_MIN_PHP_VERSION')) {
     define('CLOUDFLARE_MIN_PHP_VERSION', '7.4');
 }
 if (! defined('CLOUDFLARE_MIN_WP_VERSION')) {
-    define('CLOUDFLARE_MIN_WP_VERSION', '3.4');
+    define('CLOUDFLARE_MIN_WP_VERSION', '6.7');
 }
 if (! defined('CLOUDFLARE_PLUGIN_DIR')) {
     define('CLOUDFLARE_PLUGIN_DIR', dirname(__DIR__) . '/');

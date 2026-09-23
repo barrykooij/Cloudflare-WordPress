@@ -93,8 +93,8 @@ class HooksTest extends \PHPUnit\Framework\TestCase
 
     public function testActivateChecksWPVersionAndCurl()
     {
-        define('CLOUDFLARE_MIN_WP_VERSION', '3.4');
-        $GLOBALS['wp_version'] = '3.5';
+        define('CLOUDFLARE_MIN_WP_VERSION', '6.7');
+        $GLOBALS['wp_version'] = '6.7.1';
         $this->assertTrue($this->hooks->activate());
     }
 

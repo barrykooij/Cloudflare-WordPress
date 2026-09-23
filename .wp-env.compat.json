@@ -9,6 +9,8 @@
     "wp-content/mu-plugins": "./tests/Fixtures/MuPlugins"
   },
   "config": {
+    "WP_HOME": "http://cloudflare.localhost:8876",
+    "WP_SITEURL": "http://cloudflare.localhost:8876",
     "WP_DEBUG": true,
     "WP_DEBUG_LOG": true,
     "WP_DEBUG_DISPLAY": false,

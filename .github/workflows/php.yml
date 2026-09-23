@@ -89,6 +89,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
         extensions: ${{ matrix.extensions == 'none' && '-intl' || 'intl' }}
+        coverage: none
 
     - name: Download full vendor
       uses: actions/download-artifact@v4
@@ -106,3 +107,61 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+
+  lint:
+    name: PHPCS
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        coverage: none
+
+    - name: Download full vendor
+      uses: actions/download-artifact@v4
+      with:
+        name: vendor-dev
+        path: vendor/
+
+    - name: PHPCS (errors)
+      run: composer lint
+
+    - name: PHPCS (warnings, informational)
+      continue-on-error: true
+      run: composer lint:strict
+
+  coverage:
+    name: Coverage (PHP 8.3)
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: intl
+        coverage: pcov
+
+    - name: Download full vendor
+      uses: actions/download-artifact@v4
+      with:
+        name: vendor-dev
+        path: vendor/
+
+    - name: Run unit tests with coverage
+      run: composer test:coverage
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          coverage/
+          coverage.xml
+        retention-days: 14

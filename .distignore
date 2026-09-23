@@ -31,6 +31,7 @@ phpunit.xml.dist
 phpunit-build.xml.dist
 phpunit-integration.xml.dist
 phpunit-compatibility.xml.dist
+playwright.config.js
 .wp-env.json
 .wp-env.test.json
 .wp-env.build.json

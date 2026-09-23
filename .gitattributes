@@ -17,6 +17,7 @@
 /phpunit-build.xml.dist export-ignore
 /phpunit-integration.xml.dist export-ignore
 /phpunit-compatibility.xml.dist export-ignore
+/playwright.config.js export-ignore
 /.wp-env.json export-ignore
 /.wp-env.test.json export-ignore
 /.wp-env.build.json export-ignore

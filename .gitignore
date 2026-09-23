@@ -18,5 +18,10 @@ build/
 /coverage/
 /coverage.xml
 
+# Playwright
+/tests/E2E/.auth/
+/tests/E2E/.results/
+/playwright-report/
+
 # PHPStan
 /.phpstan.cache/

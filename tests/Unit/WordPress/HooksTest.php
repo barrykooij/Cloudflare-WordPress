@@ -93,9 +93,42 @@ class HooksTest extends \PHPUnit\Framework\TestCase
 
     public function testActivateChecksWPVersionAndCurl()
     {
-        define('CLOUDFLARE_MIN_WP_VERSION', '6.7');
+        $this->defineActivationConstants();
         $GLOBALS['wp_version'] = '6.7.1';
         $this->assertTrue($this->hooks->activate());
+    }
+
+    public function testActivateOnTooOldWordPressDeactivatesThePluginByItsBasename()
+    {
+        $this->defineActivationConstants();
+        $GLOBALS['wp_version'] = '6.6.2';
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'plugin_basename')
+            ->expects($this->once())
+            ->with('/plugins/cloudflare/cloudflare.php')
+            ->willReturn('cloudflare/cloudflare.php');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'deactivate_plugins')
+            ->expects($this->once())
+            ->with('cloudflare/cloudflare.php');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'esc_html')
+            ->expects($this->any())
+            ->willReturnArgument(0);
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_die')
+            ->expects($this->once());
+
+        $this->hooks->activate();
+    }
+
+    /**
+     * Constants cloudflare.php defines, which the unit suite never loads.
+     */
+    private function defineActivationConstants()
+    {
+        if (!defined('CLOUDFLARE_MIN_WP_VERSION')) {
+            define('CLOUDFLARE_MIN_WP_VERSION', '6.7');
+        }
+        if (!defined('CLOUDFLARE_PLUGIN_DIR')) {
+            define('CLOUDFLARE_PLUGIN_DIR', '/plugins/cloudflare/');
+        }
     }
 
     public function testDeactivateCallsClearDataStore()

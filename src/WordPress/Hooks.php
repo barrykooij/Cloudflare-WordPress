@@ -107,7 +107,7 @@ class Hooks
     public function activate()
     {
         if (version_compare($GLOBALS['wp_version'], CLOUDFLARE_MIN_WP_VERSION, '<')) {
-            deactivate_plugins(basename(CLOUDFLARE_PLUGIN_DIR));
+            deactivate_plugins(plugin_basename(CLOUDFLARE_PLUGIN_DIR . 'cloudflare.php'));
             wp_die('<p><strong>Cloudflare</strong> plugin requires WordPress version ' . esc_html(CLOUDFLARE_MIN_WP_VERSION) . ' or greater.</p>', 'Plugin Activation Error', array('response' => 200, 'back_link' => true));
         }
 

@@ -3,6 +3,7 @@
 namespace Cloudflare\APO\Tests\Integration;
 
 use Cloudflare\APO\API\Plugin;
+use Cloudflare\APO\Tests\Integration\Support\WpDieException;
 use Cloudflare\APO\WordPress\DataStore;
 
 /**
@@ -15,6 +16,25 @@ class ActivationTest extends IntegrationTestCase
         do_action('activate_cloudflare/cloudflare.php', false);
 
         $this->assertTrue($this->pluginHooks()->activate());
+        $this->assertTrue(is_plugin_active('cloudflare/cloudflare.php'));
+    }
+
+    public function testActivationOnTooOldWordPressDeactivatesThePlugin()
+    {
+        $wpVersion = $GLOBALS['wp_version'];
+        $GLOBALS['wp_version'] = '6.6.2';
+
+        try {
+            $this->pluginHooks()->activate();
+            $this->fail('activate() should stop with wp_die() on WordPress 6.6.');
+        } catch (WpDieException $e) {
+            $this->assertStringContainsString('requires WordPress version 6.7 or greater', $e->getMessage());
+            $this->assertFalse(is_plugin_active('cloudflare/cloudflare.php'));
+        } finally {
+            $GLOBALS['wp_version'] = $wpVersion;
+            $this->assertNull(activate_plugin('cloudflare/cloudflare.php'));
+        }
+
         $this->assertTrue(is_plugin_active('cloudflare/cloudflare.php'));
     }
 

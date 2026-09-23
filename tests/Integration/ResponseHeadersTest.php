@@ -2,10 +2,11 @@
 
 namespace Cloudflare\APO\Tests\Integration;
 
+use Cloudflare\APO\Tests\Integration\Support\SiteClient;
+
 /**
  * Headers the plugin adds to front-end responses. PHPUnit cannot read response
- * headers of code it runs itself, so these tests request the site from the
- * wp-env "wordpress" container over HTTP.
+ * headers of code it runs itself, so these tests request the site over HTTP.
  */
 class ResponseHeadersTest extends IntegrationTestCase
 {
@@ -18,10 +19,7 @@ class ResponseHeadersTest extends IntegrationTestCase
 
     public function testLoggedInUsersGetUncachedResponses()
     {
-        $userId = $this->createUser('subscriber');
-        $cookie = wp_generate_auth_cookie($userId, time() + HOUR_IN_SECONDS, 'logged_in');
-
-        $headers = $this->frontPageHeaders(array('Cookie: ' . LOGGED_IN_COOKIE . '=' . rawurlencode($cookie)));
+        $headers = $this->frontPageHeaders(array(SiteClient::loginCookies($this->createUser('subscriber'))));
 
         $this->assertNotEmpty(preg_grep('/^cf-edge-cache: no-cache$/i', $headers));
     }
@@ -50,23 +48,10 @@ class ResponseHeadersTest extends IntegrationTestCase
      */
     private function frontPageHeaders(array $requestHeaders = array(), $query = '')
     {
-        $home = wp_parse_url(home_url());
-        $host = $home['host'] . (isset($home['port']) ? ':' . $home['port'] : '');
-        $context = stream_context_create(array(
-            'http' => array(
-                'method' => 'GET',
-                'header' => implode("\r\n", array_merge(array('Host: ' . $host), $requestHeaders)),
-                'ignore_errors' => true,
-                'follow_location' => 0,
-                'timeout' => 10,
-            ),
-        ));
+        $response = (new SiteClient())->get('/' . $query, $requestHeaders);
 
-        $body = file_get_contents('http://wordpress/' . $query, false, $context);
+        $this->assertSame(200, $response['status']);
 
-        $this->assertNotFalse($body, 'The wp-env wordpress container did not answer.');
-        $this->assertMatchesRegularExpression('#^HTTP/\S+ 200#', $http_response_header[0]);
-
-        return $http_response_header;
+        return $response['headers'];
     }
 }

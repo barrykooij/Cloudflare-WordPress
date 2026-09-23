@@ -23,3 +23,6 @@ if (! defined('CLOUDFLARE_PLUGIN_DIR')) {
 if (! defined('LOGGED_IN_COOKIE')) {
     define('LOGGED_IN_COOKIE', 'wordpress_logged_in_');
 }
+if (! defined('AUTH_COOKIE')) {
+    define('AUTH_COOKIE', 'wordpress_');
+}

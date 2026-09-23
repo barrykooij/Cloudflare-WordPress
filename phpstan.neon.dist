@@ -16,6 +16,7 @@ parameters:
     - src
     - deprecated
     - tests/Unit
+    - tests/Integration
     - cloudflare.php
     - cloudflare.loader.php
   treatPhpDocTypesAsCertain: false

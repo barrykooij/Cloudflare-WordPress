@@ -21,6 +21,7 @@ build/
 # Playwright
 /tests/E2E/.auth/
 /tests/E2E/.results/
+/tests/E2E/.baseline/
 /playwright-report/
 
 # PHPStan

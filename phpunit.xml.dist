@@ -5,9 +5,11 @@
     bootstrap="tests/bootstrap.php"
     cacheResultFile=".phpunit.result.cache"
     colors="true"
+    beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
     failOnRisky="true"
-    failOnWarning="true">
+    failOnWarning="true"
+    convertDeprecationsToExceptions="true">
 
     <testsuites>
         <!-- Default suite. Pure unit tests, no WordPress runtime required. -->

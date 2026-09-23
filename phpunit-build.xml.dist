@@ -5,9 +5,11 @@
     bootstrap="tests/bootstrap-build.php"
     cacheResultFile=".phpunit-build.result.cache"
     colors="true"
+    beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
     failOnRisky="true"
-    failOnWarning="true">
+    failOnWarning="true"
+    convertDeprecationsToExceptions="true">
 
     <!--
         Runs a copy of the unit suite (vendor namespaces prefixed by

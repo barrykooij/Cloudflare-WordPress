@@ -31,5 +31,5 @@ echo "==> Complete ✅"
 echo
 echo "Release preparation complete! Don't forget to:"
 echo "- Add a CHANGELOG entry to readme.txt"
-echo "- \`composer update --no-dev\` to update the content-hash attribute"
+echo "- \`composer update --lock\` to update the content-hash in composer.lock"
 echo "- Commit all the changes and push!"

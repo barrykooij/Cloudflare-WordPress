@@ -25,7 +25,9 @@ To bump all the places where the plugin version is defined, run
 `scripts/bump-plugin-version.sh x.x.x` (replacing x.x.x) with your proposed
 version number.
 
-Now, update the composer checksum file using `composer update --no-dev`.
+Now, update the checksum in composer.lock using `composer update --lock`. This
+only refreshes the content-hash for the new version; it does not upgrade any
+packages.
 
 Commit all the changes you've made to this point and push up a pull request.
 

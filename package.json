@@ -12,8 +12,11 @@
     "env:test:stop": "wp-env --config=.wp-env.test.json stop",
     "env:build:start": "wp-env --config=.wp-env.build.json start",
     "env:build:stop": "wp-env --config=.wp-env.build.json stop",
+    "env:compat:start": "wp-env --config=.wp-env.compat.json start",
+    "env:compat:stop": "wp-env --config=.wp-env.compat.json stop",
     "test:integration": "wp-env --config=.wp-env.test.json run cli --env-cwd=wp-content/plugins/cloudflare php vendor/bin/phpunit -c phpunit-integration.xml.dist",
-    "test:integration:build": "wp-env --config=.wp-env.build.json run cli --env-cwd=wp-content/cloudflare-tests php vendor/bin/phpunit -c phpunit-integration.xml.dist"
+    "test:integration:build": "wp-env --config=.wp-env.build.json run cli --env-cwd=wp-content/cloudflare-tests php vendor/bin/phpunit -c phpunit-integration.xml.dist",
+    "test:compatibility": "bash scripts/compatibility-tests.sh"
   },
   "devDependencies": {
     "@wordpress/env": "^11.15.0"

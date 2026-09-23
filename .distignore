@@ -30,12 +30,15 @@ phpstan-baseline.neon
 phpunit.xml.dist
 phpunit-build.xml.dist
 phpunit-integration.xml.dist
+phpunit-compatibility.xml.dist
 .wp-env.json
 .wp-env.test.json
 .wp-env.build.json
+.wp-env.compat.json
 package.json
 package-lock.json
 .phpunit.result.cache
 .phpunit-build.result.cache
 .phpunit-integration.result.cache
+.phpunit-compatibility.result.cache
 coverage.xml

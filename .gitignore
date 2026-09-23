@@ -14,6 +14,7 @@ build/
 /.phpunit.result.cache
 /.phpunit-build.result.cache
 /.phpunit-integration.result.cache
+/.phpunit-compatibility.result.cache
 /coverage/
 /coverage.xml
 

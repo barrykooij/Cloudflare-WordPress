@@ -19,12 +19,19 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class IntegrationTestCase extends TestCase
 {
-    /** Zone id in the 32 character format the plugin's routes expect. */
+    /**
+     * Zone id in the 32 character format the plugin's routes expect. This is
+     * the example zone id from Cloudflare's API documentation.
+     */
     protected const ZONE_ID = '023e105f4ecef8ad9ca31a8372d0c353';
 
     protected const EMAIL = 'integration@example.com';
 
-    /** Pre-2026 Global API Key format: 37 lowercase hex characters. */
+    /**
+     * Not a real credential: the example Global API Key from Cloudflare's API
+     * documentation, shortened to 37 lowercase hex characters so it matches
+     * the pre-2026 Global API Key format that Client::isGlobalApiKey() detects.
+     */
     protected const GLOBAL_API_KEY = 'c2547eb745079dac9320b638f5e225cf483cc';
 
     /**

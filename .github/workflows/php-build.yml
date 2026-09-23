@@ -102,3 +102,45 @@ jobs:
 
     - name: Run tests against build artifact
       run: composer run-script test:build
+
+  integration-build:
+    name: Integration tests (build artifact in wp-env)
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        coverage: none
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifact
+        path: build/
+
+    # PHPUnit and the integration tests, run from the source checkout.
+    - name: Download dev vendor
+      uses: actions/download-artifact@v4
+      with:
+        name: vendor-dev
+        path: vendor/
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: npm
+
+    - name: Install npm dependencies
+      run: npm ci --no-audit --no-fund
+
+    # Mounts build/ as the plugins folder, next to a conflicting psr/log.
+    - name: Start WordPress with the build (wp-env)
+      run: npm run env:build:start
+
+    - name: Run integration tests against the build
+      run: npm run test:integration:build

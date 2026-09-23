@@ -5,7 +5,7 @@
   "plugins": [],
   "themes": [],
   "mappings": {
-    "wp-content/plugins/cloudflare": "./build/cloudflare",
+    "wp-content/plugins": "./build",
     "wp-content/mu-plugins": "./tests/Fixtures/MuPlugins",
     "wp-content/cloudflare-tests": "."
   },

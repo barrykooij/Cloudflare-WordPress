@@ -88,7 +88,7 @@ class Proxy
         $method = isset($_SERVER['REQUEST_METHOD']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD'])) : '';
         $parameters = $_GET;
         $jsonInput = $this->getJSONBody();
-        $body = json_decode($jsonInput, true);
+        $body = json_decode((string) $jsonInput, true);
         $path = null;
 
         if (strtoupper($method === 'GET')) {
@@ -127,7 +127,7 @@ class Proxy
      */
     public function getJSONBody()
     {
-        return $GLOBALS[Hooks::CLOUDFLARE_JSON];
+        return $GLOBALS[Hooks::CLOUDFLARE_JSON] ?? null;
     }
 
     /**

@@ -45,7 +45,7 @@ class Utils
         // blog.domain.com -> domain.com
         // does not work with multiple subdomain
         // sub1.sub2.domain.com -> sub2.domain.com
-        return preg_replace('/^[^.]*.\s*/', '', $domainName);
+        return preg_replace('/^[^.]*.\s*/', '', (string) $domainName);
     }
 
     public static function getComposerJson(): array

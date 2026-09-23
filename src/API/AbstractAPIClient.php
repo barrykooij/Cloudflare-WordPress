@@ -85,7 +85,7 @@ abstract class AbstractAPIClient implements APIInterface
      */
     public function getPaginatedResults(Request $request, $response)
     {
-        if (strtoupper($request->getMethod()) !== 'GET' || !isset($response['result_info']['total_pages'])) {
+        if (strtoupper((string) $request->getMethod()) !== 'GET' || !isset($response['result_info']['total_pages'])) {
             return $response;
         }
 

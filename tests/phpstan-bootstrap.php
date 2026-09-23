@@ -18,3 +18,8 @@ if (! defined('CLOUDFLARE_MIN_WP_VERSION')) {
 if (! defined('CLOUDFLARE_PLUGIN_DIR')) {
     define('CLOUDFLARE_PLUGIN_DIR', dirname(__DIR__) . '/');
 }
+
+// WordPress defines its cookie names at runtime in wp_cookie_constants().
+if (! defined('LOGGED_IN_COOKIE')) {
+    define('LOGGED_IN_COOKIE', 'wordpress_logged_in_');
+}

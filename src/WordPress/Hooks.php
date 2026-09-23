@@ -302,13 +302,18 @@ class Hooks
 
         // Also purge the URL the post had while it was published. WordPress
         // gives a trashed post a plain ?p= permalink and a "__trashed" slug,
-        // so build the permalink from a published copy with the original slug.
+        // made unique ("__trashed-2") when another trashed post has it, and
+        // keeps the original slug in _wp_desired_post_slug. Build the
+        // permalink from a published copy with that slug.
         if (get_post_status($postId) == 'trash') {
             $trashedPost = get_post($postId);
             if ($trashedPost instanceof WP_Post) {
+                $originalSlug = get_post_meta($postId, '_wp_desired_post_slug', true);
                 $publishedPost = clone $trashedPost;
                 $publishedPost->post_status = 'publish';
-                $publishedPost->post_name = preg_replace('/__trashed$/', '', $publishedPost->post_name);
+                $publishedPost->post_name = is_string($originalSlug) && $originalSlug !== ''
+                    ? $originalSlug
+                    : preg_replace('/__trashed(-\d+)?$/', '', $publishedPost->post_name);
                 $publishedUrl = get_permalink($publishedPost);
                 if (is_string($publishedUrl)) {
                     array_push($listofurls, $publishedUrl, $publishedUrl . 'feed/');

@@ -59,6 +59,20 @@ class PurgeOnPostChangeTest extends PurgeTestCase
         $this->assertContains($publishedUrl, $this->purgedUrls());
     }
 
+    public function testTrashingASecondPostWithTheSameSlugPurgesItsOriginalUrl()
+    {
+        wp_trash_post($this->createPost(array('post_status' => 'publish', 'post_name' => 'same-slug')));
+        $postId = $this->createPost(array('post_status' => 'publish', 'post_name' => 'same-slug'));
+        $publishedUrl = get_permalink($postId);
+        $this->http->clearRequests();
+
+        wp_trash_post($postId);
+
+        // WordPress renames it to same-slug__trashed-2, as same-slug__trashed is taken.
+        $this->assertSame('same-slug__trashed-2', get_post_field('post_name', $postId));
+        $this->assertContains($publishedUrl, $this->purgedUrls());
+    }
+
     public function testPurgeByUrlFilterCanAddUrlsOnTheSiteDomainOnly()
     {
         $extraUrl = home_url('/landing-page/');

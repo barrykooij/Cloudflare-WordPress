@@ -1364,7 +1364,26 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->assertContains('https://example.com/posts-page/', $urls);
     }
 
-    public function testGetPostRelatedLinksAddsTrashedPostUrls()
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public function trashedPostSlugs()
+    {
+        return array(
+            'original slug stored by WordPress' => array('post__trashed', 'post'),
+            'unique trashed slug with stored original' => array('post__trashed-2', 'post'),
+            'no stored original slug' => array('post__trashed', ''),
+            'unique trashed slug without stored original' => array('post__trashed-2', ''),
+        );
+    }
+
+    /**
+     * @dataProvider trashedPostSlugs
+     *
+     * @param string $trashedSlug  post_name of the trashed post.
+     * @param string $desiredSlug  Value of the _wp_desired_post_slug meta.
+     */
+    public function testGetPostRelatedLinksAddsTrashedPostUrls($trashedSlug, $desiredSlug)
     {
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_type')
             ->expects($this->any())->willReturn('post');
@@ -1383,7 +1402,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post')
             ->expects($this->any())->willReturn(new \WP_Post((object) array(
                 'ID' => 123,
-                'post_name' => 'post__trashed',
+                'post_name' => $trashedSlug,
                 'post_status' => 'trash',
             )));
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_permalink')
@@ -1396,6 +1415,8 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             });
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_status')
             ->expects($this->any())->willReturn('trash');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_meta')
+            ->expects($this->any())->willReturn($desiredSlug);
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_bloginfo_rss')
             ->expects($this->any())->willReturn('https://example.com/feed/');
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_comments_feed_link')

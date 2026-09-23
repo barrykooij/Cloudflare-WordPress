@@ -10,6 +10,7 @@ By enabling Cloudflare on your WordPress website, you’ll find performance and 
 ## Table of Contents
 
 [Description](#description)  
+[Requirements](#requirements)  
 [Installation](#installation)  
 [Support](#support)  
 [Features](#features)  
@@ -45,6 +46,11 @@ Cloudflare’s plugin for WordPress automatically refreshes the Cloudflare cache
 - Change Cloudflare settings from within the plugin without needing to navigate to the Cloudflare.com dashboard. You can change settings for cache purge, security level, Always Online™, and image optimization.
 - View analytics such as total visitors, bandwidth saved, and threats blocked.
 - Support for HTTP2/Server Push.
+
+## Requirements
+
+- WordPress 6.7 or later. The plugin supports the five newest major versions of WordPress.
+- PHP 7.4 or later.
 
 ## Installation
 

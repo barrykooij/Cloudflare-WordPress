@@ -30,4 +30,19 @@ define('WP_ADMIN', true);
 
 require_once $cloudflareWpLoad;
 
+// The environments set WP_DEBUG_DISPLAY to false, which would hide a fatal
+// error in a test. Show PHP errors on stderr instead.
+ini_set('display_errors', 'stderr');
+
+if (! defined('CLOUDFLARE_PLUGIN_DIR')) {
+    fwrite(
+        STDERR,
+        "The Cloudflare plugin is not active in this WordPress install.\n"
+        . "If wp-content/plugins/cloudflare is empty inside the container, its mapped folder was deleted and\n"
+        . "recreated after the environment started (for example by a branch switch). Restart the environment\n"
+        . "with its stop and start scripts, for example `npm run env:test:stop` then `npm run env:test:start`.\n"
+    );
+    exit(1);
+}
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';

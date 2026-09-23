@@ -70,20 +70,35 @@ abstract class IntegrationTestCase extends TestCase
 
     protected function tearDown(): void
     {
+        // Every step runs even when an earlier one throws, for example because
+        // another plugin fails while a post is deleted, so no fixture or
+        // setting leaks into the next test. The first failure is rethrown.
+        $failures = array();
+        $cleanup = function (callable $step) use (&$failures) {
+            try {
+                $step();
+            } catch (\Throwable $e) {
+                $failures[] = $e;
+            }
+        };
+
         // Deleting posts can trigger purges, so the recorder stays active
         // until the fixtures are gone.
         foreach ($this->postIds as $postId) {
-            wp_delete_post($postId, true);
+            $cleanup(function () use ($postId) {
+                wp_delete_post($postId, true);
+            });
         }
-        if ($this->userIds) {
-            require_once ABSPATH . 'wp-admin/includes/user.php';
-            foreach ($this->userIds as $userId) {
+        require_once ABSPATH . 'wp-admin/includes/user.php';
+        foreach ($this->userIds as $userId) {
+            $cleanup(function () use ($userId) {
                 wp_delete_user($userId);
-            }
+            });
         }
-        wp_set_current_user(0);
-
-        (new DataStore(new DefaultLogger()))->clearDataStore();
+        $cleanup(function () {
+            wp_set_current_user(0);
+            (new DataStore(new DefaultLogger()))->clearDataStore();
+        });
 
         foreach (array('wp_die_handler', 'wp_die_ajax_handler', 'wp_die_json_handler') as $filter) {
             remove_filter($filter, array($this, 'wpDieHandler'));
@@ -93,6 +108,10 @@ abstract class IntegrationTestCase extends TestCase
         wp_cache_flush();
 
         parent::tearDown();
+
+        if ($failures) {
+            throw $failures[0];
+        }
     }
 
     /**

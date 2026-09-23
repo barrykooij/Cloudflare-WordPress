@@ -22,13 +22,13 @@ class ActivationTest extends IntegrationTestCase
     public function testActivationOnTooOldWordPressDeactivatesThePlugin()
     {
         $wpVersion = $GLOBALS['wp_version'];
-        $GLOBALS['wp_version'] = '6.6.2';
+        $GLOBALS['wp_version'] = '1.0';
 
         try {
             $this->pluginHooks()->activate();
-            $this->fail('activate() should stop with wp_die() on WordPress 6.6.');
+            $this->fail('activate() should stop with wp_die() on an unsupported WordPress version.');
         } catch (WpDieException $e) {
-            $this->assertStringContainsString('requires WordPress version 6.7 or greater', $e->getMessage());
+            $this->assertStringContainsString('requires WordPress version ' . CLOUDFLARE_MIN_WP_VERSION . ' or greater', $e->getMessage());
             $this->assertFalse(is_plugin_active('cloudflare/cloudflare.php'));
         } finally {
             $GLOBALS['wp_version'] = $wpVersion;

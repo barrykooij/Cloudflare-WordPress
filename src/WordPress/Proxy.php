@@ -91,7 +91,7 @@ class Proxy
         $body = json_decode((string) $jsonInput, true);
         $path = null;
 
-        if (strtoupper($method === 'GET')) {
+        if (strtoupper($method) === 'GET') {
             $proxyURLType = isset($_GET['proxyURLType']) ? sanitize_text_field(wp_unslash($_GET['proxyURLType'])) : '';
             $endpoint = null;
 

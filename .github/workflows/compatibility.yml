@@ -79,8 +79,20 @@ jobs:
     - name: Install npm dependencies
       run: npm ci --no-audit --no-fund
 
+    - name: Install Chromium for the browser tests
+      run: npx playwright install --with-deps chromium
+
     - name: Start WordPress (wp-env)
       run: npm run env:compat:start
 
-    - name: Run the integration suite next to ${{ matrix.name }}
+    - name: Run the integration suite and browser tests next to ${{ matrix.name }}
       run: npm run test:compatibility -- ${{ matrix.slug }}
+
+    - name: Upload browser test results
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: browser-test-results-${{ matrix.slug }}
+        path: tests/E2E/.results/
+        retention-days: 14
+        if-no-files-found: ignore

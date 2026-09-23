@@ -47,18 +47,18 @@
         "sort-packages": true
     },
     "scripts": {
-        "lint": "phpcs",
-        "lint:fix": "phpcbf",
-        "lint:strict": "phpcs --warning-severity=1",
-        "stan": "phpstan analyse --memory-limit=2G",
-        "stan:baseline": "phpstan analyse --memory-limit=2G --generate-baseline=phpstan-baseline.neon",
-        "test": "phpunit --testsuite Unit",
+        "lint": "@php vendor/bin/phpcs",
+        "lint:fix": "@php vendor/bin/phpcbf",
+        "lint:strict": "@php vendor/bin/phpcs --warning-severity=1",
+        "stan": "@php vendor/bin/phpstan analyse --memory-limit=2G",
+        "stan:baseline": "@php vendor/bin/phpstan analyse --memory-limit=2G --generate-baseline=phpstan-baseline.neon",
+        "test": "@php vendor/bin/phpunit --testsuite Unit",
         "test:build": [
             "@prepare-build-tests",
-            "phpunit -c phpunit-build.xml.dist"
+            "@php vendor/bin/phpunit -c phpunit-build.xml.dist"
         ],
         "prepare-build-tests": "rm -rf build/tests && mkdir -p build/tests && cp -R tests/Unit build/tests/Unit && php scripts/update-namespaces.php build",
-        "test:coverage": "phpunit --testsuite Unit --coverage-html coverage/",
+        "test:coverage": "@php vendor/bin/phpunit --testsuite Unit --coverage-html coverage/",
         "qa": [
             "@lint",
             "@stan",

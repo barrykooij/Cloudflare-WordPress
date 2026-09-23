@@ -142,7 +142,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
      */
     public function testPathIsNotForFeedsReturnsTrueForNonFeedUrls($url)
     {
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array($url)));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array($url)));
     }
 
     public function pathIsNotForFeedsFalseProvider()
@@ -166,19 +166,19 @@ class HooksTest extends \PHPUnit\Framework\TestCase
      */
     public function testPathIsNotForFeedsReturnsFalseForFeedUrls($url)
     {
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array($url)));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array($url)));
     }
 
     public function testPathIsNotForFeedsHandlesUrlWithoutPath()
     {
         // parse_url('https://example.com', PHP_URL_PATH) returns null
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array('https://example.com')));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array('https://example.com')));
     }
 
     public function testPathIsNotForFeedsHandlesMalformedUrl()
     {
         // parse_url('http:///') returns false on malformed URLs
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array('http:///')));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pathIsNotForFeeds', array('http:///')));
     }
 
     public function pathHasCachableFileExtensionTrueProvider()
@@ -197,7 +197,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
      */
     public function testPathHasCachableFileExtensionReturnsTrueForCachableExtensions($url)
     {
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pathHasCachableFileExtension', array($url)));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pathHasCachableFileExtension', array($url)));
     }
 
     public function pathHasCachableFileExtensionFalseProvider()
@@ -216,7 +216,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
      */
     public function testPathHasCachableFileExtensionReturnsFalseForNonCachable($url)
     {
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pathHasCachableFileExtension', array($url)));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pathHasCachableFileExtension', array($url)));
     }
 
     public function urlIsHTTPSProvider()
@@ -239,13 +239,13 @@ class HooksTest extends \PHPUnit\Framework\TestCase
 
     public function testPageRuleContainsReturnsFalseForNonArrayInput()
     {
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pageRuleContains', array(null, 'cache_level', 'cache_everything')));
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pageRuleContains', array('not-an-array', 'cache_level', 'cache_everything')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pageRuleContains', array(null, 'cache_level', 'cache_everything')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pageRuleContains', array('not-an-array', 'cache_level', 'cache_everything')));
     }
 
     public function testPageRuleContainsReturnsFalseForEmptyArray()
     {
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pageRuleContains', array(array(), 'cache_level', 'cache_everything')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pageRuleContains', array(array(), 'cache_level', 'cache_everything')));
     }
 
     public function testPageRuleContainsMatchesAlwaysUseHttps()
@@ -258,7 +258,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'always_use_https', null)));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'always_use_https', null)));
     }
 
     public function testPageRuleContainsMatchesCacheLevelCacheEverything()
@@ -271,7 +271,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
     }
 
     public function testPageRuleContainsReturnsFalseWhenKeyMatchesButValueDiffers()
@@ -284,7 +284,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
     }
 
     public function testPageRuleContainsSkipsActionsWithoutValueKey()
@@ -298,7 +298,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'pageRuleContains', array($pageRules, 'cache_level', 'cache_everything')));
     }
 
     public function testZoneSettingAlwaysUseHTTPSEnabledReturnsTrueWhenOn()
@@ -308,7 +308,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->with('zoneTag', 'always_use_https')
             ->willReturn(array('value' => 'on'));
 
-        $this->assertSame(true, $this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
+        $this->assertTrue($this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
     }
 
     public function testZoneSettingAlwaysUseHTTPSEnabledReturnsFalseWhenOff()
@@ -317,7 +317,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->method('getZoneSetting')
             ->willReturn(array('value' => 'off'));
 
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
     }
 
     public function testZoneSettingAlwaysUseHTTPSEnabledReturnsFalseForEmptySettings()
@@ -326,7 +326,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->method('getZoneSetting')
             ->willReturn(array());
 
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
     }
 
     public function testZoneSettingAlwaysUseHTTPSEnabledReturnsFalseWhenValueKeyMissing()
@@ -335,7 +335,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->method('getZoneSetting')
             ->willReturn(array('id' => 'always_use_https'));
 
-        $this->assertSame(false, $this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
+        $this->assertFalse($this->invokeMethod($this->hooks, 'zoneSettingAlwaysUseHTTPSEnabled', array('zoneTag')));
     }
 
     // -- purgeCacheByRelevantURLs ---------------------------------------------
@@ -406,7 +406,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'is_post_type_viewable')
             ->expects($this->any())->willReturn(true);
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post')
-            ->expects($this->any())->willReturn(new \WP_Post());
+            ->expects($this->any())->willReturn(new \WP_Post(new \stdClass()));
         // WP_Post is a core WordPress class not available in tests; mock the
         // is_a() check to satisfy the WP_Post type guard in Hooks.php.
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'is_a')
@@ -804,7 +804,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'is_post_type_viewable')
             ->expects($this->any())->willReturn(true);
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post')
-            ->expects($this->any())->willReturn(new \WP_Post());
+            ->expects($this->any())->willReturn(new \WP_Post(new \stdClass()));
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'do_action')
             ->expects($this->any());
 
@@ -847,7 +847,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'is_post_type_viewable')
             ->expects($this->any())->willReturn(true);
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post')
-            ->expects($this->any())->willReturn(new \WP_Post());
+            ->expects($this->any())->willReturn(new \WP_Post(new \stdClass()));
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'apply_filters')
             ->expects($this->any())->willReturnCallback(
                 function ($name, $value) {
@@ -1478,7 +1478,7 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())->willReturn(array('category', 'private_tax'));
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_taxonomy')
             ->expects($this->any())->willReturnCallback(function ($tax) {
-                $obj = new \WP_Taxonomy();
+                $obj = new \WP_Taxonomy($tax, 'post');
                 $obj->public = ($tax === 'category');
                 return $obj;
             });

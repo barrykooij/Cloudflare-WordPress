@@ -37,9 +37,9 @@ class ZoneSettingFailExceptionTest extends \PHPUnit\Framework\TestCase
 
     public function testIsACloudFlareException()
     {
-        $this->assertInstanceOf(
+        $this->assertContains(
             'Cloudflare\APO\API\Exception\CloudFlareException',
-            new ZoneSettingFailException()
+            class_parents(ZoneSettingFailException::class)
         );
     }
 }

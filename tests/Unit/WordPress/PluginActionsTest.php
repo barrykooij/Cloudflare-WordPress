@@ -14,12 +14,10 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
     private $mockConfig;
     private $mockDataStore;
     private $mockDefaultIntegration;
-    private $mockGetAdminUrl;
     private $mockLogger;
     private $mockPluginAPIClient;
     private $mockWordPressAPI;
     private $mockWordPressClientAPI;
-    private $mockWPLoginUrl;
     private $mockRequest;
     private $pluginActions;
 
@@ -31,7 +29,7 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         $this->mockDataStore = $this->getMockBuilder('Cloudflare\APO\WordPress\DataStore')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockGetAdminUrl = $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_admin_url');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_admin_url');
         $this->mockLogger = $this->getMockBuilder('\Psr\Log\LoggerInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -44,7 +42,7 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
         $this->mockWordPressClientAPI = $this->getMockBuilder('Cloudflare\APO\WordPress\WordPressClientAPI')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockWPLoginUrl = $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_login_url');
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'wp_login_url');
         $this->mockRequest = $this->getMockBuilder('Cloudflare\APO\API\Request')
             ->disableOriginalConstructor()
             ->getMock();
@@ -283,7 +281,7 @@ class PluginActionsTest extends \PHPUnit\Framework\TestCase
 
         // Should not throw any exception
         $this->pluginActions->applyDefaultSettings();
-        $this->assertTrue(true); // Explicit assertion that we reached this point
+        $this->addToAssertionCount(1);
     }
 
     /**

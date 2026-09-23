@@ -86,7 +86,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
     public function testCreatePluginSettingObjectReturnsISO8061DateForNonNullValue()
     {
         $result = $this->pluginAPIClient->createPluginSettingObject(null, null, null, true);
-        //DateTime() will throw an exception if $result['modified_on'] isn't a valid date
-        $this->assertInstanceOf('\DateTime', new \DateTime($result['modified_on']));
+        // createFromFormat() returns false unless modified_on is an ISO 8601 date.
+        $this->assertInstanceOf('\DateTime', \DateTime::createFromFormat(\DATE_ATOM, $result['modified_on']));
     }
 }

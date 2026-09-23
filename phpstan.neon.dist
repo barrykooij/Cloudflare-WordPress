@@ -24,7 +24,6 @@ parameters:
   bootstrapFiles:
     - vendor/autoload.php
     - tests/phpstan-bootstrap.php
-    - tests/Fixtures/WordPressClassStubs.php
   dynamicConstantNames:
     - CLOUDFLARE_MIN_PHP_VERSION
     - CLOUDFLARE_MIN_WP_VERSION

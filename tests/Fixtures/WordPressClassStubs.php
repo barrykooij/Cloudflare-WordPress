@@ -16,12 +16,29 @@
 if (!class_exists('WP_Post')) {
     class WP_Post
     {
+        /**
+         * @param object $post Post data, copied onto the instance as WordPress does.
+         */
+        public function __construct($post)
+        {
+        }
     }
 }
 
 if (!class_exists('WP_Taxonomy')) {
     class WP_Taxonomy
     {
+        public $name;
         public $public = true;
+
+        /**
+         * @param string       $taxonomy    Taxonomy key.
+         * @param array|string $object_type Object types the taxonomy is registered for.
+         * @param array        $args        Taxonomy arguments.
+         */
+        public function __construct($taxonomy, $object_type, $args = array())
+        {
+            $this->name = $taxonomy;
+        }
     }
 }

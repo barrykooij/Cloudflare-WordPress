@@ -6,30 +6,13 @@ use Cloudflare\APO\WordPress\WordPressAPI;
 
 class WordPressAPITest extends \PHPUnit\Framework\TestCase
 {
-    private $mockClientAPI;
-    private $mockConfig;
     private $mockDataStore;
-    private $mockLogger;
-    private $mockDefaultIntegration;
-    private $mockWordPressClientAPI;
     private $mockWordPressWrapper;
     private $wordpressAPI;
 
     public function setUp(): void
     {
-        $this->mockClientAPI = $this->getMockBuilder('Cloudflare\APO\API\Client')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mockWordPressClientAPI = $this->getMockBuilder('Cloudflare\APO\WordPress\WordPressClientAPI')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->mockConfig = $this->getMockBuilder('Cloudflare\APO\Integration\DefaultConfig')
-                ->disableOriginalConstructor()
-                ->getMock();
         $this->mockDataStore = $this->getMockBuilder('Cloudflare\APO\WordPress\DataStore')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->mockLogger = $this->getMockBuilder('Cloudflare\APO\Integration\DefaultLogger')
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->mockWordPressWrapper = $this->getMockBuilder('Cloudflare\APO\WordPress\WordPressWrapper')
@@ -38,8 +21,6 @@ class WordPressAPITest extends \PHPUnit\Framework\TestCase
 
         $this->wordpressAPI = new WordPressAPI($this->mockDataStore);
         $this->wordpressAPI->setWordPressWrapper($this->mockWordPressWrapper);
-
-        $this->mockDefaultIntegration = new \Cloudflare\APO\Integration\DefaultIntegration($this->mockConfig, $this->wordpressAPI, $this->mockDataStore, $this->mockLogger);
     }
 
     /**

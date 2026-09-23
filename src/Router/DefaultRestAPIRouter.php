@@ -10,9 +10,7 @@ use Cloudflare\APO\Integration\IntegrationInterface;
 class DefaultRestAPIRouter implements RouterInterface
 {
     private $api;
-    private $dataStore;
     private $integration;
-    private $integrationAPI;
     private $logger;
     private $routes;
 
@@ -37,9 +35,7 @@ class DefaultRestAPIRouter implements RouterInterface
     public function __construct(IntegrationInterface $integration, APIInterface $api, $routes)
     {
         $this->api = $api;
-        $this->dataStore = $integration->getDataStore();
         $this->integration = $integration;
-        $this->integrationAPI = $integration->getIntegrationAPI();
         $this->logger = $integration->getLogger();
         $this->routes = $routes;
     }

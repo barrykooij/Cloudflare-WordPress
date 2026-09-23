@@ -80,8 +80,8 @@ abstract class AbstractAPIClient implements APIInterface
 
     /**
      * @param  Request $request
-     * @param  [Array] $response
-     * @return [Array] $paginatedResponse
+     * @param  array $response
+     * @return array
      */
     public function getPaginatedResults(Request $request, $response)
     {

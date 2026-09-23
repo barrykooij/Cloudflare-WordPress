@@ -123,7 +123,7 @@ class Proxy
      * Wrapped in a function so it can be
      * mocked during testing
      *
-     * @return json
+     * @return string|null The raw request body stored by Hooks::getCloudflareRequestJSON().
      */
     public function getJSONBody()
     {

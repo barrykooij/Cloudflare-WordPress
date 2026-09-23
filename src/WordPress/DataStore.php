@@ -57,15 +57,18 @@ class DataStore implements DataStoreInterface
     }
 
     /**
-     * @return unique id for the current user for use in the host api
+     * Unique id for the current user for use in the host API. Not used by
+     * the WordPress integration.
+     *
+     * @return null
      */
     public function getHostAPIUserUniqueId()
     {
-        return;
+        return null;
     }
 
     /**
-     * @return client v4 api key for current user
+     * @return string|null Client v4 API key or API token for the current user.
      */
     public function getClientV4APIKey()
     {
@@ -114,7 +117,7 @@ class DataStore implements DataStoreInterface
     }
 
     /**
-     * @return cloudflare email
+     * @return string|null Cloudflare account email for the current user.
      */
     public function getCloudFlareEmail()
     {

@@ -115,7 +115,7 @@ class Client extends AbstractAPIClient
     }
 
     /**
-     * @param error
+     * @param mixed $error An error exposing getMessage() and getResponse()->getBody().
      *
      * @return string
      */

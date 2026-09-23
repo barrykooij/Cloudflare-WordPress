@@ -98,9 +98,10 @@ class WordPressClientAPI extends Client
     }
 
     /**
-     * @param $urlPattern
+     * @param $zoneId
+     * @param $body
      *
-     * @return array
+     * @return bool
      */
     public function createPageRule($zoneId, $body)
     {
@@ -146,7 +147,7 @@ class WordPressClientAPI extends Client
 
     /**
      * @param  Request $request
-     * @return [Array] $response
+     * @return array
      */
     public function sendRequest(Request $request)
     {
@@ -206,8 +207,8 @@ class WordPressClientAPI extends Client
 
     /**
      * @param  Request $request
-     * @param  [Array] $response
-     * @return [Array] $paginatedResponse
+     * @param  array $response
+     * @return array
      */
     public function getPaginatedResults(Request $request, $response)
     {

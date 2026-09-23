@@ -123,7 +123,7 @@ class WordPressAPI implements IntegrationAPIInterface
     }
 
     /**
-     * @param domain name
+     * @param string $domainName
      *
      * @return string
      */

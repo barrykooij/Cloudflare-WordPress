@@ -59,7 +59,7 @@
         ],
         "prepare-build-tests": "rm -rf build/tests && mkdir -p build/tests && cp -R tests/Unit build/tests/Unit && php scripts/update-namespaces.php build",
         "test:integration": "@php vendor/bin/phpunit -c phpunit-integration.xml.dist",
-        "test:coverage": "@php vendor/bin/phpunit --testsuite Unit --coverage-html coverage/",
+        "test:coverage": "@php vendor/bin/phpunit --testsuite Unit --coverage-html coverage/ --coverage-clover coverage.xml --coverage-text",
         "qa": [
             "@lint",
             "@stan",
@@ -80,7 +80,7 @@
         "test:build": "Run the unit suite against the scoped build in build/cloudflare (run composer build first).",
         "prepare-build-tests": "Copy the unit suite to build/tests with vendor namespaces prefixed.",
         "test:integration": "Run the integration suite. Runs inside wp-env; from the host use npm run test:integration.",
-        "test:coverage": "Run the unit suite with an HTML coverage report.",
+        "test:coverage": "Run the unit suite with coverage: HTML in coverage/, Clover in coverage.xml and a summary. Needs pcov or Xdebug.",
         "qa": "Run lint, stan and the unit tests.",
         "fix-polyfill-return-types": "Remove PHP 8 return types from the symfony polyfills.",
         "remove-php-8-symfony-polyfill-bootstraps": "Remove the PHP 8 bootstrap files of the symfony polyfills.",

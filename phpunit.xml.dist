@@ -22,14 +22,10 @@
         <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener"/>
     </listeners>
 
+    <!-- Reports are requested by `composer test:coverage`. -->
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">src</directory>
         </include>
-        <report>
-            <html outputDirectory="coverage"/>
-            <clover outputFile="coverage.xml"/>
-            <text outputFile="php://stdout" showOnlySummary="true"/>
-        </report>
     </coverage>
 </phpunit>

@@ -96,6 +96,15 @@ final class HttpRecorder
     }
 
     /**
+     * Forget the requests recorded so far, for example the ones made while
+     * setting up fixtures. Registered responses are kept.
+     */
+    public function clearRequests()
+    {
+        $this->requests = array();
+    }
+
+    /**
      * @return array<int, array{method: string, path: string, query: array, headers: array, body: mixed}>
      */
     public function requests()

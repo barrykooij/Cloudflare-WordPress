@@ -30,6 +30,11 @@ define('WP_ADMIN', true);
 
 require_once $cloudflareWpLoad;
 
+// admin-ajax.php and wp-admin pages also load the administration APIs, such as
+// add_options_page() and get_plugin_data(). WordPress 6.8 and later load some
+// of them while booting; older versions do not.
+require_once ABSPATH . 'wp-admin/includes/admin.php';
+
 // The environments set WP_DEBUG_DISPLAY to false, which would hide a fatal
 // error in a test. Show PHP errors on stderr instead.
 ini_set('display_errors', 'stderr');

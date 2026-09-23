@@ -28,23 +28,25 @@ with other packages.
 
 [wp-env](https://www.npmjs.com/package/@wordpress/env) runs WordPress in Docker
 from the configuration files in the root of the repository. It is installed by
-`npm install`. There are three environments, each with its own database:
+`npm install`. There are four environments, each with its own database:
 
 | Environment | Config | Site | Start | Used for |
 |---|---|---|---|---|
 | Development | `.wp-env.json` | http://localhost:8878 | `npm run env:start` | Trying out changes |
 | Tests | `.wp-env.test.json` | http://localhost:8879 | `npm run env:test:start` | `npm run test:integration` |
 | Build | `.wp-env.build.json` | http://localhost:8877 | `npm run env:build:start` | `npm run test:integration:build` |
+| Compatibility | `.wp-env.compat.json` | http://localhost:8876 | `npm run env:compat:start` | `npm run test:compatibility` |
 
 The development and test environments load the plugin from this checkout, the
 build environment loads `build/cloudflare` (run `composer build` first). All of
-them use the latest WordPress on PHP 7.4 and activate the plugin after
-starting. Log in at `/wp-admin` with `admin` / `password`.
+them use the latest WordPress and activate the plugin after starting. They run
+PHP 7.4, except the compatibility environment, which runs PHP 8.3 because
+several of the third-party plugins it tests need PHP 8.0. Log in at `/wp-admin` with `admin` / `password`.
 
 Stop an environment with the matching `stop` script, for example
 `npm run env:test:stop`. Run WP-CLI in one with `npx wp-env run cli wp ...`,
-adding `--config=.wp-env.test.json` or `--config=.wp-env.build.json` for the
-test and build environments.
+adding `--config=` with the environment's config file for the other
+environments, for example `--config=.wp-env.test.json`.
 
 If a folder the environment mounts is deleted and recreated while it runs, for
 example by switching branches, the container keeps seeing the deleted, empty

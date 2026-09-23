@@ -1,6 +1,6 @@
 # Testing and quality checks
 
-The plugin has four test suites and two static checks. All of them run in CI
+The plugin has five test suites and two static checks. All of them run in CI
 on every push and pull request.
 
 | Suite | What it covers | Runs in | Command |
@@ -9,6 +9,7 @@ on every push and pull request.
 | Unit, build | The same tests against the PHP-Scoper build | Your PHP | `composer test:build` |
 | Integration | The plugin inside a real WordPress install | wp-env (Docker) | `npm run test:integration` |
 | Integration, build | The same tests against the build, next to a conflicting `psr/log` | wp-env (Docker) | `npm run test:integration:build` |
+| Compatibility | The integration suite with one third-party plugin active next to Cloudflare, for each supported plugin | wp-env (Docker) | `npm run test:compatibility` |
 
 ## Requirements
 
@@ -42,6 +43,8 @@ npm install
 | `npm run test:integration` | Integration suite. |
 | `npm run env:build:start` / `env:build:stop` | Start or stop the build test environment. |
 | `npm run test:integration:build` | Integration suite against `build/cloudflare`. |
+| `npm run env:compat:start` / `env:compat:stop` | Start or stop the compatibility environment. |
+| `npm run test:compatibility` | Integration suite next to each third-party plugin. Add `-- <slug> ...` for specific plugins. |
 | `npm run env:start` / `env:stop` | Start or stop the development site. |
 
 ## Unit tests
@@ -162,7 +165,61 @@ npm run test:integration
 
 Start again without the variables to go back to the defaults.
 
-### Troubleshooting
+## Compatibility tests
+
+The plugins the Cloudflare plugin is compatible with are listed in
+`tests/Integration/Compatibility/Plugins.json`. For each of them,
+`scripts/compatibility-tests.sh`:
+
+1. installs the latest version from WordPress.org, if it is not installed yet
+   (CI always starts fresh; locally, update installed plugins with
+   `npx wp-env --config=.wp-env.compat.json run cli wp plugin update --all`);
+2. activates it, together with the plugins it requires;
+3. runs the whole integration suite;
+4. deactivates it again.
+
+Every plugin is tested on its own, so a failure points at one plugin.
+
+```sh
+npm run env:compat:start
+npm run test:compatibility                     # every plugin in the list
+npm run test:compatibility -- woocommerce      # only the given slugs
+```
+
+The compatibility site runs at http://localhost:8876 with the latest WordPress
+on PHP 8.3, because several of the plugins need PHP 8.0 or WordPress 7.0.
+
+Next to the regular integration tests, `CompatibilityTest` only runs here and
+checks that, with the other plugin active:
+
+- the plugin under test is actually active;
+- the front page renders completely for desktop and mobile visitors and is
+  marked cacheable;
+- the Cloudflare settings page loads for administrators;
+- the settings proxy answers with JSON through a real `admin-ajax.php` request;
+- the Cloudflare plugin logged no PHP errors to `wp-content/debug.log`.
+
+These runs use `phpunit-compatibility.xml.dist`: the same as the integration
+suite, except that PHP deprecations do not fail a test. Third-party plugins
+trigger them in code the tests run, and they say nothing about Cloudflare.
+Errors from the Cloudflare plugin itself still fail through the `debug.log`
+check.
+
+To add a plugin, add an entry to `Plugins.json`:
+
+```json
+{ "slug": "yith-woocommerce-wishlist", "name": "YITH WooCommerce Wishlist", "requires": ["woocommerce"] }
+```
+
+`requires` lists the slugs of plugins that must be active first. A plugin that
+cannot be tested gets a `skip` entry with the reason, which the runner and CI
+report instead of running it. BigCommerce is skipped this way: without a
+connected BigCommerce store, it stops every front-end page with an uncaught
+exception, with or without Cloudflare.
+
+Only plugins hosted on WordPress.org are supported so far.
+
+## Troubleshooting
 
 - **"The Cloudflare plugin is not active in this WordPress install."** A folder
   the environment mounts was deleted and recreated after it started, usually
@@ -171,6 +228,10 @@ Start again without the variables to go back to the defaults.
   `npm run env:test:stop` and then `npm run env:test:start`.
 - **A port is already in use.** The environments use ports 8878 (development),
   8879 (tests) and 8877 (build). Set `WP_ENV_PORT` to use another one.
+- **Leftover test data in the compatibility environment.** Reset its
+  database with `npx wp-env --config=.wp-env.compat.json reset all`, then
+  activate the plugin again with
+  `npx wp-env --config=.wp-env.compat.json run cli wp plugin activate cloudflare`.
 - **A test failed with a PHP fatal error.** The environments hide PHP errors
   from web requests (`WP_DEBUG_DISPLAY` is off), but the integration suite
   shows them on stderr. Web requests log to `wp-content/debug.log` inside the
@@ -225,3 +286,4 @@ the five newest majors in:
 | PHPStan | PHPStan, and on pull requests the baseline check |
 | Integration Tests | The integration suite on the five newest WordPress majors |
 | Test Build Artifact | Build with PHP-Scoper, then the syntax check, the unit tests and the integration suite against the build |
+| Compatibility Tests | The integration suite next to each plugin in `Plugins.json`, one job per plugin. Also runs weekly, as the plugins release independently. |

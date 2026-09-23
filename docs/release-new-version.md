@@ -5,6 +5,16 @@
 If there are any required changes from the backend, frontend or dependant
 projects, update them and commit the changes.
 
+### Check the supported WordPress versions
+
+The plugin supports the five newest WordPress major versions. If the latest
+"Integration Tests" run shows a warning on `readme.txt`, a new major has been
+released: raise the minimum as described in
+[testing.md](testing.md#supported-versions).
+
+Set `Tested up to` in `readme.txt` to the newest WordPress release the
+"Integration Tests" workflow ran against.
+
 ### Update readme.txt and plugin version references
 
 WordPress uses the readme.txt heavily for metadata about the plugin. You will

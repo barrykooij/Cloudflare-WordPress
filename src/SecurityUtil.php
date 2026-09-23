@@ -38,7 +38,7 @@ class SecurityUtil
         }
         $hashedSecret = hash('sha512', $secret);
         $dataToHash = sprintf('%s-%s-%s', $hashedSecret, $user, $timeValidUntil);
-        $hashedData = static::hashFunction($dataToHash);
+        $hashedData = self::hashFunction($dataToHash);
 
         return sprintf('%s-%s', $timeValidUntil, $hashedData);
     }
@@ -61,7 +61,7 @@ class SecurityUtil
 
         $hashedSecret = hash('sha512', $secret);
         $dataToHash = sprintf('%s-%s-%s', $hashedSecret, $user, $timeValidFor);
-        $newHash = static::hashFunction($dataToHash);
+        $newHash = self::hashFunction($dataToHash);
         if (!hash_equals($newHash, $hash)) {
             return false;
         }

@@ -16,11 +16,19 @@
 if (!class_exists('WP_Post')) {
     class WP_Post
     {
+        public $ID;
+        public $post_name = '';
+        public $post_status = 'publish';
+        public $post_type = 'post';
+
         /**
          * @param object $post Post data, copied onto the instance as WordPress does.
          */
         public function __construct($post)
         {
+            foreach (get_object_vars($post) as $key => $value) {
+                $this->$key = $value;
+            }
         }
     }
 }

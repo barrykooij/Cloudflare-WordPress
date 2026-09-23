@@ -1345,8 +1345,22 @@ class HooksTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())->willReturn(1);
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_type_archive_link')
             ->expects($this->any())->willReturn(false);
+        // WordPress gives trashed posts a plain permalink and a "__trashed"
+        // slug; only a published copy yields the URL visitors used.
+        $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post')
+            ->expects($this->any())->willReturn(new \WP_Post((object) array(
+                'ID' => 123,
+                'post_name' => 'post__trashed',
+                'post_status' => 'trash',
+            )));
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_permalink')
-            ->expects($this->any())->willReturn('https://example.com/post__trashed/');
+            ->expects($this->any())->willReturnCallback(function ($post) {
+                if ($post instanceof \WP_Post && $post->post_status === 'publish') {
+                    return 'https://example.com/' . $post->post_name . '/';
+                }
+
+                return 'https://example.com/?p=123';
+            });
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_post_status')
             ->expects($this->any())->willReturn('trash');
         $this->getFunctionMock('Cloudflare\APO\WordPress', 'get_bloginfo_rss')

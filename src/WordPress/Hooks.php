@@ -5,6 +5,7 @@ namespace Cloudflare\APO\WordPress;
 use Cloudflare\APO\API\APIInterface;
 use Cloudflare\APO\Integration;
 use Psr\Log\LoggerInterface;
+use WP_Post;
 use WP_Taxonomy;
 
 class Hooks
@@ -299,11 +300,20 @@ class Hooks
         // Post URL
         array_push($listofurls, get_permalink($postId));
 
-        // Also clean URL for trashed post.
+        // Also purge the URL the post had while it was published. WordPress
+        // gives a trashed post a plain ?p= permalink and a "__trashed" slug,
+        // so build the permalink from a published copy with the original slug.
         if (get_post_status($postId) == 'trash') {
-            $trashPost = get_permalink($postId);
-            $trashPost = str_replace('__trashed', '', $trashPost);
-            array_push($listofurls, $trashPost, $trashPost . 'feed/');
+            $trashedPost = get_post($postId);
+            if ($trashedPost instanceof WP_Post) {
+                $publishedPost = clone $trashedPost;
+                $publishedPost->post_status = 'publish';
+                $publishedPost->post_name = preg_replace('/__trashed$/', '', $publishedPost->post_name);
+                $publishedUrl = get_permalink($publishedPost);
+                if (is_string($publishedUrl)) {
+                    array_push($listofurls, $publishedUrl, $publishedUrl . 'feed/');
+                }
+            }
         }
 
         // Feeds

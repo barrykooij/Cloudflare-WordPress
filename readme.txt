@@ -2,7 +2,7 @@
 Contributors: cloudflare, barrykooij, defries
 Tags: cloudflare, seo, ssl, ddos, speed, security, cdn, performance, free
 Requires at least: 6.7
-Tested up to: 7.0.1
+Tested up to: 7.1.2
 Stable tag: 4.14.4
 Requires PHP: 7.4
 License: BSD-3-Clause

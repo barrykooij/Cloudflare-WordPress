@@ -26,7 +26,7 @@ jobs:
       matrix: ${{ steps.plugins.outputs.matrix }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Read tests/Integration/Compatibility/Plugins.json
       id: plugins
@@ -49,7 +49,7 @@ jobs:
       matrix: ${{ fromJSON(needs.plugins.outputs.matrix) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - uses: shivammathur/setup-php@v2
       with:
@@ -62,7 +62,7 @@ jobs:
       run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
     - name: Cache composer dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: composer-${{ hashFiles('composer.lock') }}
@@ -71,7 +71,7 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-progress --no-interaction
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v5
       with:
         node-version: '20'
         cache: npm
@@ -90,7 +90,7 @@ jobs:
 
     - name: Upload browser test results
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: browser-test-results-${{ matrix.slug }}
         path: tests/E2E/.results/

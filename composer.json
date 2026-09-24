@@ -3,7 +3,7 @@
     "description": "A Cloudflare plugin for WordPress",
     "type": "wordpress-plugin",
     "license": "BSD-3-Clause",
-    "version": "4.14.4",
+    "version": "4.14.5",
     "require": {
         "cloudflare/cf-ip-rewrite": "^1.0.0",
         "symfony/polyfill-intl-idn": "*",

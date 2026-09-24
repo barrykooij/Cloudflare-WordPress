@@ -99,6 +99,27 @@ Yes, Cloudflare works with, and helps speed up your site even more, if you have 
 
 == Changelog ==
 
+= 4.14.5 - TBD =
+
+*Fixed*
+
+* Trashing a published post now purges the post's public URL from the Cloudflare cache, also when a trashed post with the same slug already exists.
+* Failed connections to the Cloudflare API now show the reason instead of a generic "Request error", without PHP warnings.
+* PHP 8.1+ deprecation notices when a request has empty or missing input.
+* Activating the plugin on an unsupported WordPress version now deactivates it again with a notice.
+
+*Changed*
+
+* Requires WordPress 6.7 or newer, as the plugin now supports the five latest major WordPress versions.
+* Tested up to WordPress 7.1.2.
+* Improved the automated tests and CI, including tests on the five latest WordPress versions and compatibility tests with popular plugins.
+
+*Security*
+
+* Compare CSRF tokens in constant time.
+* Escape output on the settings page and sanitize input to the settings page proxy.
+* Only use the CF-Connecting-IP header as the visitor IP address when it holds a valid IP address.
+
 = 4.14.4 - 2026-07-13 =
 
 *Fixed*

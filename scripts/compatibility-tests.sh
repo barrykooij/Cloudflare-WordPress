@@ -97,7 +97,7 @@ while IFS='|' read -r slug name requires skip; do
 
     [ "$result" = "FAIL" ] && FAILED=1
     known=$(node -e 'try { console.log(require(require("path").resolve(process.argv[1])).length) } catch (e) { console.log(0) }' "$baseline")
-    RESULTS+=("${result}  ${name}: PHPUnit $(grep -E '^(OK|Tests:)' <<< "$phpunit" | tail -1 | sed 's/^OK, but incomplete, skipped, or risky tests!$//') | browser $(grep -oE '[0-9]+ (passed|failed|flaky|skipped)' <<< "$browser" | tr '\n' ' ')| ${known} browser error(s) also without Cloudflare")
+    RESULTS+=("${result}  ${name}: PHPUnit $(grep -E '^(OK|Tests:)' <<< "$phpunit" | tail -1 | sed 's/^OK, but incomplete, skipped, or risky tests!$//') | browser $(grep -oE '[0-9]+ (passed|failed|flaky|skipped)' <<< "$browser" | awk '!seen[$0]++' | tr '\n' ' ')| ${known} browser error(s) also without Cloudflare")
 
     wp option delete cloudflare_test_compatibility_plugin --quiet || true
     wp plugin deactivate "$slug" $requires --quiet || true

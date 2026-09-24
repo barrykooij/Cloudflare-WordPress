@@ -35,6 +35,13 @@ final class CloudflareApiMock
     public const LOG = 'cloudflare-api-mock.log';
 
     /**
+     * Option with response delays, as milliseconds by path suffix, for example
+     * {"entitlements": 1500}. Lets a browser test change the order in which
+     * the settings application receives its responses.
+     */
+    public const DELAYS_OPTION = 'cloudflare_api_mock_delays';
+
+    /**
      * pre_http_request filter callback.
      *
      * @param false|array|\WP_Error $preempt
@@ -65,6 +72,7 @@ final class CloudflareApiMock
             return self::reply(403, self::error('Unknown X-Auth-Key or X-Auth-Email', 9103));
         }
 
+        self::delay($path);
         $response = self::respond($method, $path, is_array($body) ? $body : array());
         self::log($method, $path, $query, $body, $response !== null);
 
@@ -73,6 +81,21 @@ final class CloudflareApiMock
         }
 
         return self::reply(200, $response);
+    }
+
+    /**
+     * Wait before answering when DELAYS_OPTION has a delay for this path.
+     *
+     * @param string $path
+     */
+    private static function delay($path)
+    {
+        foreach ((array) get_option(self::DELAYS_OPTION, array()) as $suffix => $milliseconds) {
+            $suffix = (string) $suffix;
+            if ($suffix !== '' && substr($path, -strlen($suffix)) === $suffix) {
+                usleep((int) $milliseconds * 1000);
+            }
+        }
     }
 
     /**

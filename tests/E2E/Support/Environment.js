@@ -67,6 +67,26 @@ function clearApiLog() {
 }
 
 /**
+ * Make the API mock answer later, until resetApiDelays().
+ *
+ * @param {Object<string, number>} delays Milliseconds by API path suffix, for example { entitlements: 1500 }.
+ */
+function delayApiResponses(delays) {
+	cli('wp', 'option', 'update', 'cloudflare_api_mock_delays', JSON.stringify(delays), '--format=json');
+}
+
+/**
+ * Let the API mock answer right away again.
+ */
+function resetApiDelays() {
+	try {
+		cli('wp', 'option', 'delete', 'cloudflare_api_mock_delays');
+	} catch (error) {
+		// No delays were set.
+	}
+}
+
+/**
  * Cloudflare API calls since the last clearApiLog().
  *
  * @return {{method: string, path: string, query: Object, body: *, mocked: boolean}[]}
@@ -80,4 +100,15 @@ function apiCalls() {
 		.map((line) => JSON.parse(line));
 }
 
-module.exports = { baseURL, configFile, credentials, cli, signInToCloudflare, signOutOfCloudflare, clearApiLog, apiCalls };
+module.exports = {
+	baseURL,
+	configFile,
+	credentials,
+	cli,
+	signInToCloudflare,
+	signOutOfCloudflare,
+	clearApiLog,
+	delayApiResponses,
+	resetApiDelays,
+	apiCalls,
+};

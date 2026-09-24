@@ -89,8 +89,10 @@ while IFS='|' read -r slug name requires skip; do
         result="FAIL"
     fi
 
-    # Browser tests (Playwright) against the same site.
-    if ! browser=$(BROWSER_ERROR_BASELINE="$baseline" WP_ENV_CONFIG="$CONFIG" npx playwright test 2>&1 < /dev/null); then
+    # Browser tests (Playwright) against the same site. The known settings app
+    # bug tests check compiled.js itself, not how it works next to a plugin.
+    if ! browser=$(BROWSER_ERROR_BASELINE="$baseline" WP_ENV_CONFIG="$CONFIG" \
+        npx playwright test --grep-invert "Known settings app bugs" 2>&1 < /dev/null); then
         echo "$browser"
         result="FAIL"
     fi

@@ -6,7 +6,16 @@
 
 const { test, expect } = require('./Support/Fixtures');
 const { adminState } = require('./Support/GlobalSetup');
-const { baseURL, cli, credentials, signInToCloudflare, signOutOfCloudflare } = require('./Support/Environment');
+const { collectErrors, settingsAppBugs } = require('./Support/BrowserErrors');
+const {
+	baseURL,
+	cli,
+	credentials,
+	delayApiResponses,
+	resetApiDelays,
+	signInToCloudflare,
+	signOutOfCloudflare,
+} = require('./Support/Environment');
 
 const settingsPage = '/wp-admin/options-general.php?page=cloudflare';
 
@@ -58,5 +67,24 @@ test.describe('Cloudflare settings page', () => {
 
 		await app.getByText('Analytics', { exact: true }).click();
 		await expect(app.getByText('Zone Analytics')).toBeVisible();
+	});
+});
+
+// Known bugs in compiled.js (see settingsAppBugs). Each test makes its bug
+// happen and fails once compiled.js is fixed: then remove the test and the
+// entry in settingsAppBugs.
+test.describe('Known settings app bugs', () => {
+	test.afterEach(() => resetApiDelays());
+
+	test('the APO card throws when the entitlements arrive after the zone settings', async ({ page }) => {
+		const bug = settingsAppBugs.entitlementsNotLoaded;
+		signInToCloudflare();
+		delayApiResponses({ entitlements: 1500 });
+		const errors = collectErrors(page);
+
+		await page.goto(settingsPage);
+		await expect(page.locator('#root').getByText('Automatic Platform Optimization').first()).toBeVisible();
+
+		expect(errors, 'Fixed in compiled.js? Remove this test and settingsAppBugs.entitlementsNotLoaded').toContain(bug.error);
 	});
 });

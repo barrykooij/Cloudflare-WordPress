@@ -3,17 +3,19 @@
  * automatically fails when:
  *
  * - the page throws an uncaught JavaScript error or logs a console error, for
- *   example a script that failed to load. In compatibility runs, errors the
- *   third-party plugin also causes without Cloudflare (BROWSER_ERROR_BASELINE)
- *   are listed in the report instead;
+ *   example a script that failed to load. Known settings application bugs
+ *   (settingsAppBugs) and, in compatibility runs, errors the third-party plugin
+ *   also causes without Cloudflare (BROWSER_ERROR_BASELINE) are listed in the
+ *   report instead;
  * - the plugin made a Cloudflare API call the mock has no response for.
  */
 
 const base = require('@playwright/test');
 const { apiCalls, clearApiLog } = require('./Environment');
-const { baselineErrors, collectErrors } = require('./BrowserErrors');
+const { baselineErrors, collectErrors, settingsAppBugs } = require('./BrowserErrors');
 
 const baseline = baselineErrors();
+const knownBugs = new Map(Object.values(settingsAppBugs).map((bug) => [bug.error, bug.description]));
 
 const test = base.test.extend({
 	javascriptErrors: [
@@ -22,14 +24,17 @@ const test = base.test.extend({
 
 			await use(errors);
 
-			const known = errors.filter((error) => baseline.has(error));
-			for (const error of known) {
-				testInfo.annotations.push({ type: 'Also happens without Cloudflare', description: error });
+			const unexpected = [];
+			for (const error of errors) {
+				if (knownBugs.has(error)) {
+					testInfo.annotations.push({ type: 'Known settings app bug', description: knownBugs.get(error) });
+				} else if (baseline.has(error)) {
+					testInfo.annotations.push({ type: 'Also happens without Cloudflare', description: error });
+				} else {
+					unexpected.push(error);
+				}
 			}
-			base.expect(
-				errors.filter((error) => !baseline.has(error)),
-				'JavaScript errors on the page'
-			).toEqual([]);
+			base.expect(unexpected, 'JavaScript errors on the page').toEqual([]);
 		},
 		{ auto: true },
 	],

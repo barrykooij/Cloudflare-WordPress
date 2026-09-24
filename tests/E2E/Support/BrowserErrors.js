@@ -10,6 +10,22 @@
 const fs = require('fs');
 
 /**
+ * Known bugs in the settings application. compiled.js is built in the
+ * separate cloudflare-plugin-frontend repository and cannot be fixed here.
+ * The browser tests list these errors in the report instead of failing on
+ * them. Every entry has a test in SettingsPage.spec.js that makes the bug
+ * happen and fails once compiled.js is fixed, as a reminder to remove it.
+ *
+ * @type {Object<string, {description: string, error: string}>}
+ */
+const settingsAppBugs = {
+	entitlementsNotLoaded: {
+		description: 'The APO card reads the zone entitlements before they have loaded',
+		error: "Uncaught TypeError: Cannot read properties of undefined (reading 'zone.automatic_platform_optimization')",
+	},
+};
+
+/**
  * Start collecting errors from a page.
  *
  * @param {import('@playwright/test').Page} page
@@ -64,4 +80,4 @@ function baselineErrors() {
 	return new Set(JSON.parse(fs.readFileSync(file, 'utf8')));
 }
 
-module.exports = { collectErrors, baselineErrors };
+module.exports = { collectErrors, baselineErrors, settingsAppBugs };

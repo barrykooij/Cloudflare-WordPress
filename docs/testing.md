@@ -188,7 +188,7 @@ npm run test:e2e
 
 | Test | Checks |
 |---|---|
-| `SettingsPage.spec.js` | Without stored credentials the settings application asks to sign in, and signing in with valid credentials shows the Home tab. An API key Cloudflare rejects shows an error and stores nothing. With credentials, the Home, Settings and Analytics tabs render for the site's zone. |
+| `SettingsPage.spec.js` | Without stored credentials the settings application asks to sign in, and signing in with valid credentials shows the Home tab. An API key Cloudflare rejects shows an error and stores nothing. With credentials, the Home, Settings and Analytics tabs render for the site's zone. Known settings application bugs still happen (see below). |
 | `FrontPage.spec.js` | The front page loads for a visitor, a visitor on a phone and a logged-in user, with the right `cf-edge-cache` header. |
 
 Every browser test also fails automatically when:
@@ -197,6 +197,22 @@ Every browser test also fails automatically when:
   because a script failed to load (in compatibility runs, only errors the
   third-party plugin does not also cause without Cloudflare, see below);
 - the plugin made a Cloudflare API call that has no mocked response.
+
+### Known settings application bugs
+
+The settings application (`compiled.js`) is built in the separate
+[cloudflare-plugin-frontend](https://github.com/cloudflare/cloudflare-plugin-frontend)
+repository, so its bugs cannot be fixed here. Their errors are listed in
+`settingsAppBugs` in `tests/E2E/Support/BrowserErrors.js`. The browser tests
+show them in the report as "Known settings app bug" instead of failing on them.
+
+Each entry has a test under "Known settings app bugs" in
+`SettingsPage.spec.js` that makes the bug happen on purpose. When a new
+`compiled.js` fixes the bug, that test fails: remove the test and the entry.
+
+| Bug | Happens when |
+|---|---|
+| The APO card reads the zone entitlements before they have loaded (`entitlementsNotLoaded`) | The entitlements response arrives after the zone settings. The mock does this on purpose with `delayApiResponses()`. |
 
 ### The Cloudflare API mock
 
@@ -216,6 +232,11 @@ Every call is logged to `wp-content/cloudflare-api-mock.log` in the
 environment, marked as mocked or not. When the settings application starts
 using a new API call, a browser test fails with the call that is missing: add a
 response for it in `CloudflareApiMock::respond()`.
+
+`delayApiResponses({ entitlements: 1500 })` in `Environment.js` makes the mock
+answer calls whose path ends in `entitlements` 1.5 seconds later, to change the
+order in which the settings application receives its responses.
+`resetApiDelays()` removes the delays again.
 
 ### Failures
 
@@ -240,7 +261,8 @@ The plugins the Cloudflare plugin is compatible with are listed in
 2. activates it, together with the plugins it requires;
 3. records the browser errors the plugin causes on its own, with Cloudflare
    deactivated (see below);
-4. runs the whole integration suite and the browser tests;
+4. runs the whole integration suite and the browser tests (without the known
+   settings app bug tests, which check `compiled.js` itself);
 5. deactivates it again.
 
 Every plugin is tested on its own, so a failure points at one plugin.
